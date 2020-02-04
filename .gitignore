@@ -1,0 +1,16 @@
+node_modules/
+metro-cache/
+.expo/*
+npm-debug.*
+*.jks
+*.sock
+*.log
+*.p12
+*.keystore
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+web-report/
+config.js
+todo
