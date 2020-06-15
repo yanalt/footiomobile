@@ -4,9 +4,10 @@
 // import React, { useState } from 'react';
 // import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons';
-import { ScreenOrientation } from 'expo';
+// import { ScreenOrientation } from 'expo';
+import * as ScreenOrientation from 'expo-screen-orientation';
 // import AppNavigator from './navigation/AppNavigator';
-// import { createAppContainer } from 'react-navigation';
+// import { createAppContainer } from 'react-navigation'; //a
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -15,6 +16,7 @@ import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import GameScreen from './screens/GameScreen';
+import GuestScreen from './screens/GuestScreen';
 
 import * as firebase from 'firebase';
 import { firebaseConfig } from './config';
@@ -22,7 +24,7 @@ firebase.initializeApp(firebaseConfig);
 
 
 async function changeScreenOrientation() {
-  await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT);
+  await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
 }
 
 export default class App extends React.Component {
@@ -40,7 +42,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   LoadingScreen: LoadingScreen,
   LoginScreen: LoginScreen,
   DashboardScreen: DashboardScreen,
-  GameScreen: GameScreen
+  GameScreen: GameScreen,
+  GuestScreen: GuestScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);

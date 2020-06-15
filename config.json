@@ -9,6 +9,6 @@
         "appId": "1:759889128579:web:d7962059b7fe6e93"
     },
     "hostConfig":{
-        "address": "http://10.0.0.43:3001"
+        "address": "http://10.0.0.5:3001"
     }
 }

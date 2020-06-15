@@ -11,6 +11,7 @@ import * as Expo from 'expo';
 import firebase from 'firebase';
 import axios from 'axios';
 import {hostConfig} from '../config';
+import * as Google from 'expo-google-app-auth';
 
 _storeData = async(str, val) => {
     try {
@@ -47,6 +48,7 @@ handleNewUser = function (email, token) {
             refreshToken: token
         }
     }).then((res) => {
+        console.log(res.headers['x-auth']);
         _storeData('x-auth', res.headers['x-auth']).then(() => {
             this
                 .props
@@ -70,11 +72,14 @@ handleReturningUser = function (email, token) {
             email,
             refreshToken: token
         }
-    }).then(() => {
-        this
-            .props
-            .navigation
-            .navigate('DashboardScreen');
+    }).then((res) => {
+        console.log(res.headers['x-auth']);
+        _storeData('x-auth', res.headers['x-auth']).then(() => {
+            this
+                .props
+                .navigation
+                .navigate('DashboardScreen');
+        });
     }).catch((e) => {
         console.log(e);
         // for(var propName in e) {     let propValue = e[propName];
@@ -144,8 +149,7 @@ class LoginScreen extends Component {
     signInWithGoogleAsync = async() => {
         console.log("signInWithGoogleAsync");
         try {
-            const result = await Expo
-                .Google
+            const result = await Google
                 .logInAsync({
                     behavior: 'web', androidClientId: '759889128579-jhgdv8nbg9ri1ocn19ja0d07dhlfep9p.apps.googleusercontent.com',
                     // iosClientId:
@@ -171,8 +175,10 @@ class LoginScreen extends Component {
             this
                 .props
                 .navigation
-                .navigate('GameScreen');
+                .navigate('GuestScreen');
+                console.log("lul");
         } catch (e) {
+            console.log(e);
             alert(e);
             return {error: true};
         }
@@ -182,24 +188,9 @@ class LoginScreen extends Component {
         console.log("render");
         return (
             <View style={styles.container}>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
                 <Button
                     title="Sign In With Google"
                     onPress={() => this.signInWithGoogleAsync()}/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
-                <Button title="⚽ ⚽ ⚽"/>
                 <Button title="Play as a guest! ⚽" onPress={() => this.handleGuest()}/>
             </View>
         );

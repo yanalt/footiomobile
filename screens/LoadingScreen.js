@@ -19,6 +19,7 @@ class LoadingScreen extends Component {
         this.checkIfLoggedIn();
     }
     handleLoggedIn(user) {
+        let deez = this;
         console.log("LoadingScreen.js handleLoggedIn()");
         // console.log(user.email); console.log(user.idToken);
         user
@@ -34,15 +35,16 @@ class LoadingScreen extends Component {
                         email: user.email,
                         refreshToken: idToken
                     }
-                }).then((res) => {
-                    return res;
                 })
-            }).then((res)=>{
-                // console.log(res);
-                this
-                    .props
-                    .navigation
-                    .navigate('DashboardScreen');
+                .then((res) => {
+                    console.log(res.headers['x-auth']);
+                    _storeData('x-auth', res.headers['x-auth']).then(() => {
+                        deez
+                            .props
+                            .navigation
+                            .navigate('DashboardScreen');
+                    });
+                })
             })
             .catch((e) => {
                 console.log("ROFL");

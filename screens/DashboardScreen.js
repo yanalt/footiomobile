@@ -16,7 +16,43 @@ import firebase from 'firebase';
 <Text>{firebase.auth().currentUser.refreshToken}</Text> */
 }
 
+_storeData = async(str, val) => {
+    try {
+        await AsyncStorage.setItem(str, val);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+_retrieveData = async(str) => {
+    try {
+        const value = await AsyncStorage.getItem(str);
+        if (value !== null) {
+            // We have data!!
+            console.log(value);
+            return value;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 class DashboardScreen extends Component {
+    state = {
+        isLoading: true
+    };
+    componentDidMount() {
+
+        _retrieveData('x-auth').then((val) => {
+            //   console.log(val);
+            xauth = val;
+            this.setState({isLoading: false});
+        }).catch((e) => {
+            console.log(e);
+        });
+
+    }
+
     handleStartGame() {
         console.log("lul");
         this
@@ -28,11 +64,17 @@ class DashboardScreen extends Component {
         console.log("luul");
     }
     render() {
-        console.log("rofl");
+        if (this.state.isLoading) {
+            return (
+                <View style={styles.container}>
+                    <Text>Loading</Text>
+                </View>
+            )
+        }
         return (
             <View style={styles.container}>
                 <Button
-                    title="START GAME ⚽"
+                    title="START ⚽"
                     onPress={() => {
                     this.handleStartGame()
                 }}/>
@@ -46,6 +88,7 @@ class DashboardScreen extends Component {
                 <Button title="  Sign out  " onPress={() => firebase.auth().signOut()}/>
             </View>
         );
+
     }
 
 }
