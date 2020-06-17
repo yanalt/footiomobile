@@ -17,6 +17,8 @@ import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import GameScreen from './screens/GameScreen';
 import GuestScreen from './screens/GuestScreen';
+import GetCoinsScreen from './screens/GetCoinsScreen';
+import ShopScreen from './screens/ShopScreen';
 
 import * as firebase from 'firebase';
 import { firebaseConfig } from './config';
@@ -43,7 +45,9 @@ const AppSwitchNavigator = createSwitchNavigator({
   LoginScreen: LoginScreen,
   DashboardScreen: DashboardScreen,
   GameScreen: GameScreen,
-  GuestScreen: GuestScreen
+  GuestScreen: GuestScreen,
+  GetCoinsScreen: GetCoinsScreen,
+  ShopScreen: ShopScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);

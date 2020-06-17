@@ -26,7 +26,7 @@ _retrieveData = async(str) => {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
             // We have data!!
-            console.log(value);
+            // console.log(value);
             return value;
         }
     } catch (e) {

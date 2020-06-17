@@ -29,7 +29,10 @@
     },
     "android": {
       "package": "com.lol.jej",
-      "versionCode": 1
+      "versionCode": 1,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-3940256099942544~3347511713"
+      }
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
   }

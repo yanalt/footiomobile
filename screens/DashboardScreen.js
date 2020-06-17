@@ -4,9 +4,10 @@ import {
     Platform,
     StyleSheet,
     Text,
-    Button,
+    TouchableOpacity,
     View,
-    AsyncStorage
+    AsyncStorage,
+    TextInput
 } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
@@ -28,8 +29,7 @@ _retrieveData = async(str) => {
     try {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
-            // We have data!!
-            console.log(value);
+            // We have data!! console.log(value);
             return value;
         }
     } catch (e) {
@@ -53,15 +53,28 @@ class DashboardScreen extends Component {
 
     }
 
-    handleStartGame() {
-        console.log("lul");
+    onChangeText(text){
+        _storeData('nickname',text);
+    }
+
+    handleStart() {
         this
             .props
             .navigation
             .navigate('GameScreen');
     }
+
+    handleShop() {
+        this
+            .props
+            .navigation
+            .navigate('ShopScreen');
+    }
     handleGetCoins() {
-        console.log("luul");
+        this
+            .props
+            .navigation
+            .navigate('GetCoinsScreen');
     }
     render() {
         if (this.state.isLoading) {
@@ -73,19 +86,52 @@ class DashboardScreen extends Component {
         }
         return (
             <View style={styles.container}>
-                <Button
-                    title="START ⚽"
-                    onPress={() => {
-                    this.handleStartGame()
-                }}/>
-                <Button title="============="/>
-                <Button
-                    title="GET COINS"
-                    onPress={() => {
-                    this.handleGetCoins()
-                }}/>
-                <Button title="============="/>
-                <Button title="  Sign out  " onPress={() => firebase.auth().signOut()}/>
+                <Text style={styles.title}>FOOTIO</Text>
+                <View style={styles.buttonSpace}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.handleStart()
+                    }}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>START ⚽</Text>
+                    </TouchableOpacity>
+                    <TextInput
+                        style={{
+                        height: 40,
+                        borderColor: 'gray',
+                        borderWidth: 1
+                    }}
+                        onChangeText={text => this.onChangeText(text)}
+                        placeholder='Nickname'/>
+                </View>
+                <View style={styles.buttonSpace}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.handleShop()
+                    }}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>PICK SKIN</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonSpace}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.handleGetCoins()
+                    }}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>GET COINS</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonSpaceSignOut}>
+                    <TouchableOpacity
+                        onPress={() => firebase.auth().signOut()}
+                        style={styles.buttonSignOut}>
+                        <Text
+                            style={{
+                            fontSize: 15
+                        }}>Sign out</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
 
@@ -102,89 +148,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fff'
     },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0.4)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center'
+    button: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
-    contentContainer: {
-        paddingTop: 30
+    buttonSignOut: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
-    welcomeContainer: {
-        alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20
-    },
-    welcomeImage: {
-        width: 100,
-        height: 80,
-        resizeMode: 'contain',
-        marginTop: 3,
-        marginLeft: -10
-    },
-    getStartedContainer: {
-        alignItems: 'center',
-        marginHorizontal: 50
-    },
-    homeScreenFilename: {
-        marginVertical: 7
-    },
-    codeHighlightText: {
-        color: 'rgba(96,100,109, 0.8)'
-    },
-    codeHighlightContainer: {
-        backgroundColor: 'rgba(0,0,0,0.05)',
-        borderRadius: 3,
-        paddingHorizontal: 4
-    },
-    getStartedText: {
-        fontSize: 17,
-        color: 'rgba(96,100,109, 1)',
-        lineHeight: 24,
-        textAlign: 'center'
-    },
-    tabBarInfoContainer: {
+    buttonSpaceSignOut: {
+        padding: 10,
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        ...Platform.select({
-            ios: {
-                shadowColor: 'black',
-                shadowOffset: {
-                    width: 0,
-                    height: -3
-                },
-                shadowOpacity: 0.1,
-                shadowRadius: 3
-            },
-            android: {
-                elevation: 20
-            }
-        }),
-        alignItems: 'center',
-        backgroundColor: '#fbfbfb',
-        paddingVertical: 20
+        bottom: '10%',
+        right: 0
     },
-    tabBarInfoText: {
-        fontSize: 17,
-        color: 'rgba(96,100,109, 1)',
-        textAlign: 'center'
+    buttonText: {
+        fontSize: 30
     },
-    navigationFilename: {
-        marginTop: 5
+    buttonSpace: {
+        width: '70%',
+        padding: 5
     },
-    helpContainer: {
-        marginTop: 15,
-        alignItems: 'center'
-    },
-    helpLink: {
-        paddingVertical: 15
-    },
-    helpLinkText: {
-        fontSize: 14,
-        color: '#2e78b7'
+    title: {
+        fontSize: 50
     }
 });

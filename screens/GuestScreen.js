@@ -5,7 +5,8 @@ import {
     Text,
     View,
     AsyncStorage,
-    Button
+    Button,
+    StatusBar
 } from 'react-native';
 import WebView from 'react-native-webview';
 
@@ -25,7 +26,7 @@ _retrieveData = async(str) => {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
             // We have data!
-            console.log(value);
+            // console.log(value);
             return value;
         }
     } catch (e) {
@@ -60,11 +61,12 @@ class GuestScreen extends Component {
         console.log(hostConfig.address + '/#/rooms');
         return (
             <View style={styles.container}>
+            <StatusBar hidden/>
                 <WebView
                     source={{
                     uri: hostConfig.address + '/#/rooms'
                 }}/>
-                <View style={{position:'absolute', width:'5%', bottom:'30%', right:0}}>
+                <View style={{position:'absolute', bottom:'30%', right:0}}>
                     <Button title="Exit!"
                         style={{}}
                         onPress={() => {
