@@ -10,7 +10,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 // import { createAppContainer } from 'react-navigation'; //a
 
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -19,6 +19,7 @@ import GameScreen from './screens/GameScreen';
 import GuestScreen from './screens/GuestScreen';
 import GetCoinsScreen from './screens/GetCoinsScreen';
 import ShopScreen from './screens/ShopScreen';
+import NativeGameScreen from './screens/NativeGameScreen';
 
 import * as firebase from 'firebase';
 import { firebaseConfig } from './config';
@@ -41,6 +42,7 @@ export default class App extends React.Component {
 
 
 const AppSwitchNavigator = createSwitchNavigator({
+  NativeGameScreen: NativeGameScreen,
   LoadingScreen: LoadingScreen,
   LoginScreen: LoginScreen,
   DashboardScreen: DashboardScreen,

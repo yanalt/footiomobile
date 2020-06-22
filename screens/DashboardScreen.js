@@ -64,6 +64,13 @@ class DashboardScreen extends Component {
             .navigate('GameScreen');
     }
 
+    handleNative() {
+        this
+            .props
+            .navigation
+            .navigate('NativeGameScreen');
+    }
+
     handleShop() {
         this
             .props
@@ -103,6 +110,15 @@ class DashboardScreen extends Component {
                     }}
                         onChangeText={text => this.onChangeText(text)}
                         placeholder='Nickname'/>
+                </View>
+                <View style={styles.buttonSpace}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.handleNative()
+                    }}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>NATIVE</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.buttonSpace}>
                     <TouchableOpacity
