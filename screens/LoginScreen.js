@@ -175,7 +175,7 @@ class LoginScreen extends Component {
             this
                 .props
                 .navigation
-                .navigate('GuestScreen');
+                .navigate('ThreeJSGameScreen');
                 console.log("lul");
         } catch (e) {
             console.log(e);

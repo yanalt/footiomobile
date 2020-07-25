@@ -20,6 +20,8 @@ import GuestScreen from './screens/GuestScreen';
 import GetCoinsScreen from './screens/GetCoinsScreen';
 import ShopScreen from './screens/ShopScreen';
 import NativeGameScreen from './screens/NativeGameScreen';
+import ThreeJSGameScreen from './screens/ThreeJSGameScreen';
+
 
 import * as firebase from 'firebase';
 import { firebaseConfig } from './config';
@@ -33,7 +35,7 @@ async function changeScreenOrientation() {
 export default class App extends React.Component {
 
   componentDidMount() {
-    changeScreenOrientation();
+    // changeScreenOrientation();
 }
   render(){
     return <AppNavigator />;
@@ -42,14 +44,15 @@ export default class App extends React.Component {
 
 
 const AppSwitchNavigator = createSwitchNavigator({
-  NativeGameScreen: NativeGameScreen,
   LoadingScreen: LoadingScreen,
   LoginScreen: LoginScreen,
   DashboardScreen: DashboardScreen,
+  NativeGameScreen: NativeGameScreen,
   GameScreen: GameScreen,
   GuestScreen: GuestScreen,
   GetCoinsScreen: GetCoinsScreen,
-  ShopScreen: ShopScreen
+  ShopScreen: ShopScreen,
+  ThreeJSGameScreen: ThreeJSGameScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);

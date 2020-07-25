@@ -61,7 +61,7 @@ class DashboardScreen extends Component {
         this
             .props
             .navigation
-            .navigate('GameScreen');
+            .navigate('ThreeJSGameScreen');
     }
 
     handleNative() {
@@ -111,7 +111,7 @@ class DashboardScreen extends Component {
                         onChangeText={text => this.onChangeText(text)}
                         placeholder='Nickname'/>
                 </View>
-                <View style={styles.buttonSpace}>
+                {/* <View style={styles.buttonSpace}>
                     <TouchableOpacity
                         onPress={() => {
                         this.handleNative()
@@ -119,7 +119,7 @@ class DashboardScreen extends Component {
                         style={styles.button}>
                         <Text style={styles.buttonText}>NATIVE</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <View style={styles.buttonSpace}>
                     <TouchableOpacity
                         onPress={() => {

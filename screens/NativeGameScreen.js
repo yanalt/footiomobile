@@ -11,9 +11,10 @@ import {
     Dimensions,
     YellowBox
 } from 'react-native';
-import WebView from 'react-native-webview';
+import {GLView} from 'expo-gl';
+
+import Expo2DContext from 'expo-2d-context';
 import {AdMobBanner} from 'expo-ads-admob';
-// import {MonoText} from '../components/StyledText';
 import {hostConfig} from '../config';
 import axios from 'axios';
 import Canvas from 'react-native-canvas';
@@ -312,13 +313,15 @@ function drawCommercials(index) {
     for (var i = 0; i < comDiv; i++) {
         var x = global.screenWidth / 2 - player.x + i * global.gameWidth / comDiv;
         var y = global.screenHeight / 2 - player.y - comHeight;
-        // graph.drawImage(comArr[index + i % 2], x, y, global.gameWidth / comDiv, comHeight);
+        // graph.drawImage(comArr[index + i % 2], x, y, global.gameWidth / comDiv,
+        // comHeight);
     }
 
     for (let i = 0; i < comDiv; i++) {
         var a = global.screenWidth / 2 - player.x + i * global.gameWidth / comDiv;
         var b = global.gameHeight + global.screenHeight / 2 - player.y;
-        // graph.drawImage(comArr[index + i % 2], a, b, global.gameWidth / comDiv, comHeight);
+        // graph.drawImage(comArr[index + i % 2], a, b, global.gameWidth / comDiv,
+        // comHeight);
     }
 }
 
@@ -335,8 +338,9 @@ function drawBall(ball) {
     // console.log(ball.frame);
     if (!ball.frame) 
         ball.frame = 0;
-    // graph.drawImage(ballSprites[(Math.floor(ball.frame / 10) % 10)], ballX - 15, ballY - 15, 30, 30);
-}
+        // graph.drawImage(ballSprites[(Math.floor(ball.frame / 10) % 10)], ballX - 15,
+        // ballY - 15, 30, 30);
+    }
 
 function drawGoalkeeper(goalkeepers) {
     // graph.strokeStyle = 'hsl(220, 40%, 45%)'; graph.fillStyle = 'hsl(220, 40%,
@@ -618,18 +622,17 @@ function drawPlayers() {
         srcX = (userCurrent.frame % 12) * width;
         srcY = Math.floor(userCurrent.frame / 12) * height;
 
-        // if (cellCurrent.skinsprite != null && cellCurrent.skinsprite != "") 
-        //     graph.drawImage(characterSprites[cellCurrent.skinsprite], srcX, srcY, width, height, circle.x - 60, circle.y - 190, width, height);
-        // else 
-        //     graph.drawImage(characterSprites[0], srcX, srcY, width, height, circle.x - 60, circle.y - 170, width, height);
-
-            // var character = new Image(); if (cellCurrent.skinsprite != null &&
-            // cellCurrent.skinsprite != "")     character.src = "../assets/images/" +
-            // cellCurrent.skinsprite + ".png"; else     character.src =
-            // "../assets/images/0.png"; graph.drawImage(character, srcX, srcY, width,
-            // height, circle.x - 60, circle.y
-            // - 190, width, height);
-        }
+        // if (cellCurrent.skinsprite != null && cellCurrent.skinsprite != "")
+        // graph.drawImage(characterSprites[cellCurrent.skinsprite], srcX, srcY, width,
+        // height, circle.x - 60, circle.y - 190, width, height); else
+        // graph.drawImage(characterSprites[0], srcX, srcY, width, height, circle.x - 60,
+        // circle.y - 170, width, height); var character = new Image(); if
+        // (cellCurrent.skinsprite != null && cellCurrent.skinsprite != "")
+        // character.src = "../assets/images/" + cellCurrent.skinsprite + ".png"; else
+        //   character.src = "../assets/images/0.png"; graph.drawImage(character, srcX,
+        // srcY, width, height, circle.x - 60, circle.y
+        // - 190, width, height);
+    }
     // //the following are to draw a line in the movement direction
     // graph.beginPath(); let deg = 0; let rad = 28; if (player.xoffset != 0) { deg
     // = Math.atan2(player.yoffset, player.xoffset); } else {     deg =
@@ -929,29 +932,29 @@ class NativeGameScreen extends Component {
     }
 
     componentDidMount() {
-        canvasHolder = this.cvs;
-        console.log(this.cvs.current.width);
-        this.cvs.current.width = Dimensions
-            .get('window')
-            .width;
-        this.cvs.current.height = Dimensions
-            .get('window')
-            .height;
-        console.log(this.cvs.current.width);
-        this.ctx = this
-            .cvs
-            .current
-            .getContext('2d');
-        graph = this.ctx;
-        // this.ctx.fillStyle = 'purple'; this     .ctx     .fillRect(0, 0, 100, 100);
+        // canvasHolder = this.cvs;
+        // console.log(this.cvs.current.width);
+        // this.cvs.current.width = Dimensions
+        //     .get('window')
+        //     .width;
+        // this.cvs.current.height = Dimensions
+        //     .get('window')
+        //     .height;
+        // console.log(this.cvs.current.width);
+        // this.ctx = this
+        //     .cvs
+        //     .current
+        //     .getContext('2d');
+        // graph = this.ctx;
+        // // this.ctx.fillStyle = 'purple'; this     .ctx     .fillRect(0, 0, 100, 100);
 
-        startGame();
+        // startGame();
 
-        // const socket = socketIO('http://10.0.0.5:3002', {     transports:
-        // ['websocket'],     jsonp: false }); socket.connect(); socket.on('connect', ()
-        // => {     console.log('connected to socket server'); });
-        // socket.on('connect_error', () => {     console.log('error while connecting');
-        // });
+        // // const socket = socketIO('http://10.0.0.5:3002', {     transports:
+        // // ['websocket'],     jsonp: false }); socket.connect(); socket.on('connect', ()
+        // // => {     console.log('connected to socket server'); });
+        // // socket.on('connect_error', () => {     console.log('error while connecting');
+        // // });
     }
     handleExit() {
         console.log("handleExit");
@@ -961,10 +964,42 @@ class NativeGameScreen extends Component {
             .navigate('DashboardScreen');
     }
 
+    _onGLContextCreate = (gl) => {
+        console.log('here here');
+        var ctx = new Expo2DContext(gl);
+ 
+        ctx.fillStyle = "grey";
+        ctx.fillRect(20, 40, 100, 100);
+        ctx.fillStyle = "white";
+        ctx.fillRect(30, 100, 20, 30);
+        ctx.fillRect(60, 100, 20, 30);
+        ctx.fillRect(90, 100, 20, 30);
+        ctx.beginPath();
+        ctx.arc(50,70,18,0,2*Math.PI);
+        ctx.arc(90,70,18,0,2*Math.PI);
+        ctx.fill();
+ 
+        ctx.fillStyle = "grey";
+        ctx.beginPath();
+        ctx.arc(50,70,8,0,2*Math.PI);
+        ctx.arc(90,70,8,0,2*Math.PI);
+        ctx.fill();
+ 
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(70,40);
+        ctx.lineTo(70,30);
+        ctx.arc(70,20,10,0.5*Math.PI,2.5*Math.PI);
+        ctx.stroke();
+ 
+        ctx.flush();
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <Canvas ref={this.cvs}/>
+                {/* <Canvas ref={this.cvs}/> */}
+                <GLView style={{ width:300, height:300 }} onContextCreate={this._onGLContextCreate}/>
             </View>
         );
     }

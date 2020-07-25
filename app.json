@@ -1,5 +1,8 @@
 {
   "expo": {
+    "packagerOpts": {
+      "assetExts": ["jpeg","png","mp3","ttf"]
+    },
     "name": "MUNDmobile",
     "slug": "MUNDmobile",
     "privacy": "public",
@@ -21,7 +24,7 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "**/*", "assets/audio/*", "assets/img/*", "assets/image/*"
     ],
     "ios": {
       "supportsTablet": true,
