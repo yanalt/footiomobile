@@ -7,7 +7,8 @@ import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
 import {View,TouchableOpacity,
-    Dimensions,Text,Platform,Image} from 'react-native';
+    Dimensions,Text,Platform,
+    AsyncStorage,Image,I18nManager} from 'react-native';
 import io from 'socket.io-client';
 import {
     AmbientLight,
@@ -38,6 +39,8 @@ import {
     MeshPhongMaterial,
     ImageLoader
 } from 'three';
+I18nManager.allowRTL(false);
+
 
 console.disableYellowBox = true;
 console.ignoredYellowBox = ['Setting a timer'];
@@ -166,6 +169,19 @@ let target = {
     y: 0
 };
 
+
+_retrieveData = async(str) => {
+    try {
+        const value = await AsyncStorage.getItem(str);
+        if (value !== null) {
+            // We have data!! console.log(value);
+            return value;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 function extractLocalFileName(str){
     let result = '';
     for (let i = 0; i < str.length; i++) {
@@ -257,10 +273,31 @@ class ThreeJSGameScreen extends React.Component {
 
     handleExit() {
         console.log("handleExit");
-        reactAppHolder
-            .props
-            .navigation
-            .navigate('DashboardScreen');
+        global.disconnected = true;
+        socket.close();
+        socket = null;
+
+        _retrieveData('x-auth').then((val) => {
+            console.log(val);
+            if(val){
+                reactAppHolder
+                    .props
+                    .navigation
+                    .navigate('DashboardScreen');
+            }else{
+                reactAppHolder
+                    .props
+                    .navigation
+                    .navigate('LoginScreen');
+            }
+        }).catch((e) => {
+            reactAppHolder
+                .props
+                .navigation
+                .navigate('LoginScreen');
+            console.log(e);
+        });
+
     }
 
     render(){
@@ -374,8 +411,8 @@ function handleSprint(){
 }
 
 function handleLayout(event){
-    // if(Platform.OS=='android'||Platform.OS=='ios')
-        // changeScreenOrientation();
+    if(Platform.OS=='android'||Platform.OS=='ios')
+        changeScreenOrientation();
     let {x, y, width, height} = event.nativeEvent.layout;
     global.screenWidth=width;
     global.screenHeight=height;
@@ -571,7 +608,8 @@ async function handleContextCreate(gl) {
             drawBall(ball);
             drawBallDirection();
             checkGoal();
-            socket.emit('0', target);
+            if(socket)
+                socket.emit('0', target);
             
             // if(frames%100==0){
             //     reactAppHolder.setState({consoleText: width + 'x' + height});
@@ -783,6 +821,7 @@ function loadCSS(w, h){
 
 function startGame() {
     global.playerName = "";
+    console.log(socket);
     if (! socket) {
         console.log('connecting...');
         socket = io.connect('http://10.0.0.5:3002', {
@@ -795,6 +834,11 @@ function startGame() {
         setupSocket(socket);
     }
 
+    socket.emit('windowResized',
+                {
+                    screenWidth:Dimensions.get('window').width,
+                    screenHeight:Dimensions.get('window').height,
+                });
     socket.emit('respawn');
 }
 
@@ -967,7 +1011,7 @@ function drawBall(ball) {
     ballImg.offset.x = ball.frame / 10;
 
     if (ballSprite) {
-        ballSprite.position.set(ball.x, - ball.y,3);
+        ballSprite.position.set(ball.x, - ball.y,10);
     } else if (ballImg) {
         ballMaterial = new SpriteMaterial({
             map: ballImg,
@@ -994,16 +1038,18 @@ function drawGoalkeepers(goalkeepers) {
             goalkeepers[1].circle = drawCircle(goalkeepers[1].position.x, - goalkeepers[1].position.y, global.goalkeeperRadius, 32, 'gk1', 'red',false);  
         
         if(! goalkeepers[0].character){
-            goalkeepers[0].material = new SpriteMaterial({map:goalkeepers[0].img});
-            goalkeepers[0].character = new Sprite(goalkeepers[0].material);
-            goalkeepers[0].character.scale.set(240, 80, 1);
+            goalkeepers[0].material = new MeshBasicMaterial({map:goalkeepers[0].img, transparent:true});
+            goalkeepers[0].geometry = new THREE.PlaneGeometry( 240, 80);
+            goalkeepers[0].character = new THREE.Mesh(goalkeepers[0].geometry,goalkeepers[0].material);
+            // goalkeepers[0].character.scale.set(240, 80, 1);
             scene.add(goalkeepers[0].character);
         }
 
         if(! goalkeepers[1].character){
-            goalkeepers[1].material = new SpriteMaterial({map:goalkeepers[0].img});
-            goalkeepers[1].character = new Sprite(goalkeepers[1].material);
-            goalkeepers[1].character.scale.set(240, 80, 1);
+            goalkeepers[1].material = new MeshBasicMaterial({map:goalkeepers[0].img, transparent:true});
+            goalkeepers[1].geometry = new THREE.PlaneGeometry( 240, 80);
+            goalkeepers[1].character = new THREE.Mesh(goalkeepers[1].geometry,goalkeepers[1].material);
+            // goalkeepers[1].character.scale.set(240, 80, 1);
             scene.add(goalkeepers[1].character);
         }
     }
@@ -1168,7 +1214,7 @@ function movePlayers() {
             }
         }
         if (currentExpanded && currentExpanded.characterSprite && currentExpanded.characterCircle) {
-            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 100, 1);
+            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 100, 10);
             currentExpanded.characterCircle.position.set(users[i].x, - users[i].y, 10);
             let index = currentExpanded.emoji;
             if(index===0||(index&&index!=-1)){
@@ -1273,25 +1319,32 @@ async function JUSTloadMyShitUp() {
         //     });
         // }
 
-        await loadAsync(require('../assets/img/net.png')).then((res) => {
-            goalNet = res;
-        });
+        goalNet = await loadTextureSafely(require('../assets/img/net.png'));
+        emojis[0] = await loadTextureSafely(require('../assets/img/emojis/grin.png'));
+        emojis[1] = await loadTextureSafely(require('../assets/img/emojis/angry.png'));
+        emojis[2] = await loadTextureSafely(require('../assets/img/emojis/poo.png'));
+        emojis[3] = await loadTextureSafely(require('../assets/img/emojis/tongue.png'));
+        emojis[4] = await loadTextureSafely(require('../assets/img/emojis/wave.png'));
+        
+        // await loadAsync(require('../assets/img/net.png')).then((res) => {
+        //     goalNet = res;
+        // });
 
-        await loadAsync(require('../assets/img/emojis/grin.png')).then((res) => {
-            emojis[0] = res;
-        });
-        await loadAsync(require('../assets/img/emojis/angry.png')).then((res) => {
-            emojis[1] = res;
-        });
-        await loadAsync(require('../assets/img/emojis/poo.png')).then((res) => {
-            emojis[2] = res;
-        });
-        await loadAsync(require('../assets/img/emojis/tongue.png')).then((res) => {
-            emojis[3] = res;
-        });
-        await loadAsync(require('../assets/img/emojis/wave.png')).then((res) => {
-            emojis[4] = res;
-        });
+        // await loadAsync(require('../assets/img/emojis/grin.png')).then((res) => {
+        //     emojis[0] = res;
+        // });
+        // await loadAsync(require('../assets/img/emojis/angry.png')).then((res) => {
+        //     emojis[1] = res;
+        // });
+        // await loadAsync(require('../assets/img/emojis/poo.png')).then((res) => {
+        //     emojis[2] = res;
+        // });
+        // await loadAsync(require('../assets/img/emojis/tongue.png')).then((res) => {
+        //     emojis[3] = res;
+        // });
+        // await loadAsync(require('../assets/img/emojis/wave.png')).then((res) => {
+        //     emojis[4] = res;
+        // });
 
         characters[0] = require('../assets/img/0.png');
         characters[1] = require('../assets/img/1.png');
@@ -1339,23 +1392,30 @@ async function JUSTloadMyShitUp() {
 
         characters[40] = require('../assets/img/40.png');
 
-        await loadAsync(require('../assets/img/emojis/goal.png')).then((res) => {
-            goalDirection.img = res;
-        });
+        goalDirection.img = await loadTextureSafely(require('../assets/img/emojis/goal.png'));
+        ballDirection.img = await loadTextureSafely(require('../assets/img/emojis/ball.png'));
+        goalkeepers[0].img = await loadTextureSafely(require('../assets/img/goalkeeper.png'));
+        ballImg = await loadTextureSafely(require('../assets/img/ball_0.png'));
+        ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
+        ballImg.repeat.set( 1 / 10, 1 );
 
-        await loadAsync(require('../assets/img/emojis/ball.png')).then((res) => {
-            ballDirection.img = res;
-        });
+        // await loadAsync(require('../assets/img/emojis/goal.png')).then((res) => {
+        //     goalDirection.img = res;
+        // });
 
-        await loadAsync(require('../assets/img/goalkeeper.png')).then((res) => {
-            goalkeepers[0].img = res;
-        });
+        // await loadAsync(require('../assets/img/emojis/ball.png')).then((res) => {
+        //     ballDirection.img = res;
+        // });
 
-        await loadAsync(require('../assets/img/ball_0.png')).then((res) => {
-            ballImg = res;
-            ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
-            ballImg.repeat.set( 1 / 10, 1 );
-        });
+        // await loadAsync(require('../assets/img/goalkeeper.png')).then((res) => {
+        //     goalkeepers[0].img = res;
+        // });
+
+        // await loadAsync(require('../assets/img/ball_0.png')).then((res) => {
+        //     ballImg = res;
+        //     ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
+        //     ballImg.repeat.set( 1 / 10, 1 );
+        // });
 
 
 
@@ -1382,7 +1442,7 @@ async function JUSTloadMyShitUp() {
 
 
     }catch(e){
-        // console.log(e);
+        console.log('err ' + e);
         // socket.emit('err',e);
     }
 }

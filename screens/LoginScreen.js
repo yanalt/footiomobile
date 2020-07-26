@@ -34,9 +34,6 @@ _retrieveData = async(str) => {
     }
 };
 
-omegalul = function () {
-    console.log("OMEGALUL");
-}
 
 handleNewUser = function (email, token) {
     console.log('handleNewUser');

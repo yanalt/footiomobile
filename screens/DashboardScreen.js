@@ -140,7 +140,13 @@ class DashboardScreen extends Component {
                 </View>
                 <View style={styles.buttonSpaceSignOut}>
                     <TouchableOpacity
-                        onPress={() => firebase.auth().signOut()}
+                        onPress={() => {
+                            _storeData('x-auth', '').then(() => {
+                                firebase.auth().signOut()
+                            }).catch((e)=>{
+                                console.log(e);
+                            });
+                        }}
                         style={styles.buttonSignOut}>
                         <Text
                             style={{

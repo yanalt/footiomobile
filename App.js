@@ -35,7 +35,7 @@ async function changeScreenOrientation() {
 export default class App extends React.Component {
 
   componentDidMount() {
-    // changeScreenOrientation();
+    changeScreenOrientation();
 }
   render(){
     return <AppNavigator />;
