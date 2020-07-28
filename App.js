@@ -19,6 +19,7 @@ import GameScreen from './screens/GameScreen';
 import GuestScreen from './screens/GuestScreen';
 import GetCoinsScreen from './screens/GetCoinsScreen';
 import ShopScreen from './screens/ShopScreen';
+import NativeShopScreen from './screens/NativeShopScreen';
 import NativeGameScreen from './screens/NativeGameScreen';
 import ThreeJSGameScreen from './screens/ThreeJSGameScreen';
 
@@ -52,6 +53,7 @@ const AppSwitchNavigator = createSwitchNavigator({
   GuestScreen: GuestScreen,
   GetCoinsScreen: GetCoinsScreen,
   ShopScreen: ShopScreen,
+  NativeShopScreen:NativeShopScreen,
   ThreeJSGameScreen: ThreeJSGameScreen
 });
 

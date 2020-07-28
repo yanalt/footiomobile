@@ -29,7 +29,7 @@ _retrieveData = async(str) => {
 
 let xauth = '';
 
-class GameScreen extends Component {
+class ShopScreen extends Component {
 
     state = {
         isLoading: true
@@ -94,11 +94,11 @@ class GameScreen extends Component {
     }
 }
 
-// export default function GameScreen() { //a }
+// export default function ShopScreen() { //a }
 
-export default GameScreen;
+export default ShopScreen;
 
-GameScreen.navigationOptions = {
+ShopScreen.navigationOptions = {
     header: null
 };
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
-    GameScreenFilename: {
+    ShopScreenFilename: {
         marginVertical: 7
     }
 });

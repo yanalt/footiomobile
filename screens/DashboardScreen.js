@@ -75,7 +75,7 @@ class DashboardScreen extends Component {
         this
             .props
             .navigation
-            .navigate('ShopScreen');
+            .navigate('NativeShopScreen');
     }
     handleGetCoins() {
         this
