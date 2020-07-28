@@ -34,6 +34,9 @@ _retrieveData = async(str) => {
     }
 };
 
+omegalul = function () {
+    console.log("OMEGALUL");
+}
 
 handleNewUser = function (email, token) {
     console.log('handleNewUser');
@@ -121,10 +124,6 @@ class LoginScreen extends Component {
                         .signInWithCredential(credential)
                         .then(function (result) {
                             console.log('user signed in!');
-                            // console.log(result); console.log(googleUser.idToken);
-                            // console.log(result.credential[0]);
-                            // console.log(result.credential.oauthIdToken); console.log(result.user);
-                            // console.log(result.user.stsTokenManager);
                             if (result.additionalUserInfo.isNewUser) {
                                 console.log("New user");
                                 handleNewUser(googleUser.user.email, googleUser.idToken);
@@ -144,11 +143,12 @@ class LoginScreen extends Component {
     }
 
     signInWithGoogleAsync = async() => {
-        console.log("signInWithGoogleAsync");
         try {
             const result = await Google
                 .logInAsync({
-                    behavior: 'web', androidClientId: '759889128579-jhgdv8nbg9ri1ocn19ja0d07dhlfep9p.apps.googleusercontent.com',
+                    behavior: 'web', 
+                    androidClientId: '759889128579-jhgdv8nbg9ri1ocn19ja0d07dhlfep9p.apps.googleusercontent.com',
+                    androidStandaloneAppClientId: '759889128579-uaqe04e8e7d6bhtfeca56a6n26u0ctor.apps.googleusercontent.com',
                     // iosClientId:
                     // '759889128579-ir3o6i9ei8bi95vrq0g7q2ct29klf9qm.apps.googleusercontent.com',
                     scopes: ['profile', 'email']

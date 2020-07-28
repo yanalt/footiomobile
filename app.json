@@ -31,7 +31,7 @@
       "bundleIdentifier": "fuckyou"
     },
     "android": {
-      "package": "com.lol.jej",
+      "package": "com.timsa7.mundmobile",
       "versionCode": 1,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-3940256099942544~3347511713"
