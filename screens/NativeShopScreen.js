@@ -4,16 +4,22 @@ import {hostConfig} from '../config';
 import {
     Image,
     Platform,
+    Button,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
     AsyncStorage,
-    TextInput
+    TextInput,
+    FlatList
 } from 'react-native';
+import { ImageLoader } from 'three';
 
 
 let xauth = '';
+let portraits = [], flags = [];
+let currentSkinId = '';
+preload();
 
 _storeData = async (str, val) => {
     try {
@@ -53,17 +59,14 @@ class NativeShopScreen extends Component {
 
     }
 
-    _isMounted = true;
+    _isMounted = false;
 
-    componentDidUpdate() {
-        SkinAPI.setSkins(this.state.skins);
+    async componentDidUpdate() {
+        await SkinAPI.setSkins(this.state.skins);
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-        this.setState = (state,callback)=>{
-            return;
-        };
       }
 
     async componentDidMount() {
@@ -82,7 +85,7 @@ class NativeShopScreen extends Component {
             console.log('failed response from skins');
             console.log('err' + e);
         });
-        SkinAPI.getCreditBalance().then(creditBalance => {
+        await SkinAPI.getCreditBalance().then(creditBalance => {
             if (this._isMounted)
                 this.setState({creditBalance});
             if (creditBalance == null || creditBalance == undefined) { // window.location.hash = '#/';
@@ -90,29 +93,31 @@ class NativeShopScreen extends Component {
         }).catch((e) => {
             console.log('err' + e);
         });
-        SkinAPI.updateLastTime().catch((e) => {
-            console.log('err' + e)
-        });
-        SkinAPI.getSkins().then(skins => {
+        // await SkinAPI.updateLastTime().catch((e) => {
+        //     console.log('err' + e)
+        // });
+        await SkinAPI.getSkins().then(skins => {
             if (this._isMounted)
                 this.setState({skins});
         }).catch((e) => {
             console.log('err' + e);
         });
-        SkinAPI.getOwnedSkins().then(Ownedskins => {
+        await SkinAPI.getCurrentSkin().then(currentSkin => {
+            if (this._isMounted){
+                this.setState({currentSkin});
+                currentSkinId=currentSkin;
+            }
+        }).catch((e) => {
+            console.log('err' + e);
+        });
+        await SkinAPI.getOwnedSkins().then(Ownedskins => {
             if (this._isMounted)                
                 this.setState({Ownedskins});
         }).catch((e) => {
             console.log('err' + e);
         });
-        SkinAPI.getCurrentSkin().then(currentSkin => {
-            if (this._isMounted)
-                this.setState({currentSkin});
-        }).catch((e) => {
-            console.log('err' + e);
-        });
     }
-    handleConfirm(skinId, price) {
+    async handleConfirm(skinId, price) {
         if (price <= this.state.creditBalance) {
             axios({
                 method: 'post',
@@ -125,34 +130,34 @@ class NativeShopScreen extends Component {
                 }
             });
 
-            SkinAPI.getSkins().then(skins => {
+            await SkinAPI.getSkins().then(async skins => { //
                 if (this._isMounted){
                     this.setState({skins});
-                    SkinAPI.setSkins(skins);}
+                    await SkinAPI.setSkins(skins);}
             }).catch((e) => {
                 console.log('err' + e);
             });
-            SkinAPI.getCreditBalance().then(creditBalance => {
+            await SkinAPI.getCreditBalance().then(creditBalance => {
                 if (this._isMounted)
                     this.setState({creditBalance});
             }).catch((e) => {
                 console.log('err' + e);
             });
-            SkinAPI.getCurrentSkin().then(currentSkin => {
+            await SkinAPI.getCurrentSkin().then(currentSkin => {
                 if (this._isMounted)
                     this.setState({currentSkin});
             }).catch((e) => {
                 console.log('err' + e);
             });
         } else {
-            document.getElementById('creditBalanceTitle').style.backgroundColor = "red";
+            // document.getElementById('creditBalanceTitle').style.backgroundColor = "red";
         }
     }
     handleSearch(showCompleted, searchText) {
         if (this._isMounted)
             this.setState({showCompleted: showCompleted, searchText: searchText.toLowerCase()});
     }
-    OwnedhandleConfirm(skinId) {
+    async OwnedhandleConfirm(skinId) {
         axios({
             method: 'post',
             headers: {
@@ -163,7 +168,7 @@ class NativeShopScreen extends Component {
                 skinId
             }
         });
-        SkinAPI.getCurrentSkin().then(currentSkin => {
+        await SkinAPI.getCurrentSkin().then(currentSkin => {
             if (this._isMounted)
                 this.setState({currentSkin});
         }).then(() => {
@@ -176,6 +181,16 @@ class NativeShopScreen extends Component {
         if (this._isMounted)
             this.setState({showCompleted: showCompleted, searchText: searchText.toLowerCase()});
     }
+
+
+    handleExit() {
+        console.log("handleExit");
+        this
+            .props
+            .navigation
+            .navigate('DashboardScreen');
+    }
+
     render() {
         let {
             skins,
@@ -204,11 +219,77 @@ class NativeShopScreen extends Component {
         });
 
         let filteredSkins = SkinAPI.filterSkins(ActualSkins, showCompleted, searchText);
-        let OwnedfilteredSkins = SkinAPI.filterSkins(ActualOwnedSkins, showCompleted, searchText); // make this
+        let ownedFilteredSkins = SkinAPI.filterSkins(ActualOwnedSkins, showCompleted, searchText); // make this
+
+        function Item( {item} ) {
+            let lockOpacity = 0.4, checkmarkOpacity = 0;
+            if(item.Owned)
+                lockOpacity = 0;
+            if(item._id==currentSkinId)
+                checkmarkOpacity = 0.5;
+            return (
+                <View style={{borderRadius:20,backgroundColor:0x001122,paddingLeft:20}}>
+                    <Text>{item.name}</Text>
+                    <Image source = {flags[item.sprite]}/>
+                    <Image source = {portraits[item.sprite]}/>
+                    <Image style={{height: 100, width: 100, opacity:lockOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/lock.png')}/>
+                    <Image style={{height: 100, width: 100, opacity:checkmarkOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/checkmark.png')}/>
+                </View>
+            );
+          }
 
         return (
-            <View>
+            <View style={{
+                flex: 1,
+                paddingTop:30,
+                paddingLeft:30,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                alignItems: 'flex-start',
+            }}>
+                <View style={{width:'50%', paddingRight:'20%'}}>
+                    <Text style={{fontSize:30,height:50}}>Locked Skins</Text>
+                    <FlatList
+                    data={filteredSkins}
+                    renderItem={( item ) => {return <Item item={item.item}/>}}
+                    keyExtractor={item => item.item}
+                    />
+                </View>
 
+
+                <View style={{width:'50%', paddingRight:'20%'}}>
+                        <Text style={{fontSize:30,height:50}}>Your Skins</Text>
+                        <FlatList
+                        data={ownedFilteredSkins}
+                        renderItem={( item ) => {return <Item item={item.item}/>}}
+                        keyExtractor={item => item.item}
+                        />
+                </View>
+
+                <View
+                    style={{
+                    position: 'absolute',
+                    bottom: '30%',
+                    right: 0
+                }}>
+                    <Button
+                        title="Exit!"
+                        onPress={() => {
+                        this.handleExit()
+                    }}/></View>
+
+{/* 
+                <View
+                    style={{
+                    position: 'absolute',
+                    bottom: '30%',
+                    right: 0
+                }}>
+                    <Button
+                        title="Exit!"
+                        onPress={() => {
+                        this.handleExit()
+                    }}/></View>
 
                 <View style={
                     {textAlign: 'center'}
@@ -244,7 +325,7 @@ class NativeShopScreen extends Component {
                             id="owned">
                             <View className="column small-centered">
                                 <View className="container">
-                                    <SkinList skins={OwnedfilteredSkins}
+                                    <SkinList skins={ownedFilteredSkins}
                                         current={currentSkin}
                                         onConfirm={
                                             this.OwnedhandleConfirm
@@ -275,7 +356,7 @@ class NativeShopScreen extends Component {
 
                     </View>
 
-                </View>
+                </View> */}
 
 
             </View>
@@ -304,7 +385,7 @@ let SkinAPI = {
             return skins;
         }
     },
-    getCreditBalance: function () {
+    getCreditBalance: async function () {
         return axios({
             method: 'get',
             url: hostConfig.address + '/users/me/creditbalance',
@@ -318,7 +399,7 @@ let SkinAPI = {
             console.log(e);
         });
     },
-    updateLastTime: function () {
+    updateLastTime: async function () {
         return axios({
             method: 'post',
             url: hostConfig.address + '/users/lasttime',
@@ -330,7 +411,7 @@ let SkinAPI = {
             console.log(e);
         });
     },
-    getCurrentSkin: function () {
+    getCurrentSkin: async function () {
         return axios({
             method: 'get',
             url: hostConfig.address + '/users/me/currentskin',
@@ -344,7 +425,7 @@ let SkinAPI = {
             console.log(e);
         });
     },
-    getSkins: function () {
+    getSkins: async function () {
         let skins = [];
         return axios({
             method: 'get',
@@ -353,16 +434,17 @@ let SkinAPI = {
                 'x-auth': xauth
             }
         }).then(function (response) {
-            skins = Array.concat(true, [], response.data.skins);
+            skins = response.data.skins;
             console.log('successful response from skins');
         }).then(() => {
             return skins;
         }).catch((e) => {
             console.log('failed response from skins');
             console.log(e);
+            return [];
         });
     },
-    getRooms: function () {
+    getRooms: async function () {
         let rooms = [];
         return axios({
             method: 'get',
@@ -377,7 +459,7 @@ let SkinAPI = {
             console.log(e);
         });
     },
-    getOwnedSkins: function () {
+    getOwnedSkins: async function () {
         let skins = [];
         return axios({
             method: 'get',
@@ -386,7 +468,7 @@ let SkinAPI = {
                 'x-auth': xauth
             }
         }).then(function (response) {
-            skins = Array.concat(true, [], response.data);
+            skins = response.data;
             console.log('successful response from skins');
         }).then(() => {
             return skins;
@@ -481,9 +563,7 @@ class SkinList extends Component {
         };
 
         return (
-            <View> {
                 renderSkins()
-            } </View>
         )
     }
 }
@@ -501,7 +581,7 @@ class Skin extends Component {
             };
         let skinContainer = {
             border: '2px solid blue',
-            borderRadius: '20px',
+            borderRadius: 20,
             padding: 10,
             fontSize: 27
         }
@@ -521,8 +601,6 @@ class Skin extends Component {
         let idConfirm = _id + "Confirm";
         let idCancel = _id + "Cancel";
         let idUnlock = _id + "Unlock";
-        let srcImage = "/img/" + sprite + ".png";
-        let srcFlag = "/img/flags/" + sprite + ".png";
         let here = "";
         if (_id == current) {
             here = " - SELECTED";
@@ -537,8 +615,8 @@ class Skin extends Component {
                     </View>
                     <View>
 
-                        <Image src={srcImage}/>
-                        <Image src={srcFlag}/>
+                        <Image source={portraits[sprite]}/>
+                        <Image source={flags[sprite]}/>
                         <TouchableOpacity style={buttonTags}
                             id={idUnlock}
                             onClick={
@@ -576,8 +654,8 @@ class Skin extends Component {
         return (
             <View style={skinContainer}>
                 <View>
-                    <Image src={srcImage}/>
-                    <Image src={srcFlag}/>
+                    <Image source={portraits[sprite]}/>
+                    <Image source={flags[sprite]}/>
 
                 </View>
                 <View>
@@ -619,3 +697,106 @@ class Skin extends Component {
         )
     }
 }
+
+
+function preload(){
+    
+    portraits[0]=require('../assets/img/portraits/0.png');
+    portraits[1]=require('../assets/img/portraits/1.png');
+    portraits[2]=require('../assets/img/portraits/2.png');
+    portraits[3]=require('../assets/img/portraits/3.png');
+    portraits[4]=require('../assets/img/portraits/4.png');
+    portraits[5]=require('../assets/img/portraits/5.png');
+    portraits[6]=require('../assets/img/portraits/6.png');
+    portraits[7]=require('../assets/img/portraits/7.png');
+    portraits[8]=require('../assets/img/portraits/8.png');
+    portraits[9]=require('../assets/img/portraits/9.png');
+
+    portraits[10]=require('../assets/img/portraits/10.png');
+    portraits[11]=require('../assets/img/portraits/11.png');
+    portraits[12]=require('../assets/img/portraits/12.png');
+    portraits[13]=require('../assets/img/portraits/13.png');
+    portraits[14]=require('../assets/img/portraits/14.png');
+    portraits[15]=require('../assets/img/portraits/15.png');
+    portraits[16]=require('../assets/img/portraits/16.png');
+    portraits[17]=require('../assets/img/portraits/17.png');
+    portraits[18]=require('../assets/img/portraits/18.png');
+    portraits[19]=require('../assets/img/portraits/19.png');
+
+    portraits[20]=require('../assets/img/portraits/20.png');
+    portraits[21]=require('../assets/img/portraits/21.png');
+    portraits[22]=require('../assets/img/portraits/22.png');
+    portraits[23]=require('../assets/img/portraits/23.png');
+    portraits[24]=require('../assets/img/portraits/24.png');
+    portraits[25]=require('../assets/img/portraits/25.png');
+    portraits[26]=require('../assets/img/portraits/26.png');
+    portraits[27]=require('../assets/img/portraits/27.png');
+    portraits[28]=require('../assets/img/portraits/28.png');
+    portraits[29]=require('../assets/img/portraits/29.png');
+
+    portraits[30]=require('../assets/img/portraits/30.png');
+    portraits[31]=require('../assets/img/portraits/31.png');
+    portraits[32]=require('../assets/img/portraits/32.png');
+    portraits[33]=require('../assets/img/portraits/33.png');
+    portraits[34]=require('../assets/img/portraits/34.png');
+    portraits[35]=require('../assets/img/portraits/35.png');
+    portraits[36]=require('../assets/img/portraits/36.png');
+    portraits[37]=require('../assets/img/portraits/37.png');
+    portraits[38]=require('../assets/img/portraits/38.png');
+    portraits[39]=require('../assets/img/portraits/39.png');
+
+    portraits[40]=require('../assets/img/portraits/40.png');
+
+
+    
+    flags[0]=require('../assets/img/flags/0.png');
+    flags[1]=require('../assets/img/flags/1.png');
+    flags[2]=require('../assets/img/flags/2.png');
+    flags[3]=require('../assets/img/flags/3.png');
+    flags[4]=require('../assets/img/flags/4.png');
+    flags[5]=require('../assets/img/flags/5.png');
+    flags[6]=require('../assets/img/flags/6.png');
+    flags[7]=require('../assets/img/flags/7.png');
+    flags[8]=require('../assets/img/flags/8.png');
+    flags[9]=require('../assets/img/flags/9.png');
+
+    flags[10]=require('../assets/img/flags/10.png');
+    flags[11]=require('../assets/img/flags/11.png');
+    flags[12]=require('../assets/img/flags/12.png');
+    flags[13]=require('../assets/img/flags/13.png');
+    flags[14]=require('../assets/img/flags/14.png');
+    flags[15]=require('../assets/img/flags/15.png');
+    flags[16]=require('../assets/img/flags/16.png');
+    flags[17]=require('../assets/img/flags/17.png');
+    flags[18]=require('../assets/img/flags/18.png');
+    flags[19]=require('../assets/img/flags/19.png');
+
+    flags[20]=require('../assets/img/flags/20.png');
+    flags[21]=require('../assets/img/flags/21.png');
+    flags[22]=require('../assets/img/flags/22.png');
+    flags[23]=require('../assets/img/flags/23.png');
+    flags[24]=require('../assets/img/flags/24.png');
+    flags[25]=require('../assets/img/flags/25.png');
+    flags[26]=require('../assets/img/flags/26.png');
+    flags[27]=require('../assets/img/flags/27.png');
+    flags[28]=require('../assets/img/flags/28.png');
+    flags[29]=require('../assets/img/flags/29.png');
+
+    flags[30]=require('../assets/img/flags/30.png');
+    flags[31]=require('../assets/img/flags/31.png');
+    flags[32]=require('../assets/img/flags/32.png');
+    flags[33]=require('../assets/img/flags/33.png');
+    flags[34]=require('../assets/img/flags/34.png');
+    flags[35]=require('../assets/img/flags/35.png');
+    flags[36]=require('../assets/img/flags/36.png');
+    flags[37]=require('../assets/img/flags/37.png');
+    flags[38]=require('../assets/img/flags/38.png');
+    flags[39]=require('../assets/img/flags/39.png');
+
+    flags[40]=require('../assets/img/flags/40.png');
+    
+}
+
+
+
+
