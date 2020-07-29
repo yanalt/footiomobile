@@ -87,22 +87,22 @@ function prepCharacterSprites() {
 
 function loadCharacterSprites(sprite) {
     if (!sprite) 
-        characterSprites[0].src = "../assets/images/0.png";
+        characterSprites[0].src = "../assets/img/0.png";
     else if (characterSprites[sprite] && characterSprites[sprite].src == "") 
-        characterSprites[sprite].src = "../assets/images/" + sprite + ".png";
+        characterSprites[sprite].src = "../assets/img/" + sprite + ".png";
     }
 
 function loadBallSprites() {
     for (let i = 0; i <= 9; i++) {
         ballSprites[i] = new Image();
-        ballSprites[i].src = "../assets/images/ball" + i + ".png";
+        ballSprites[i].src = "../assets/img/ball" + i + ".png";
     }
 }
 
 function initCommercialImages(count) {
     for (var i = 0; i < count; i++) {
         comArr[i] = new Image();
-        comArr[i].src = "../assets/images/commercials/" + i + ".png";
+        comArr[i].src = "../assets/img/commercials/" + i + ".png";
     }
 }
 

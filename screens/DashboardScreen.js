@@ -102,14 +102,14 @@ class DashboardScreen extends Component {
                         style={styles.button}>
                         <Text style={styles.buttonText}>START ⚽</Text>
                     </TouchableOpacity>
-                    <TextInput
+                    {/* <TextInput
                         style={{
                         height: 40,
                         borderColor: 'gray',
                         borderWidth: 1
                     }}
                         onChangeText={text => this.onChangeText(text)}
-                        placeholder='Nickname'/>
+                        placeholder='Nickname'/> */}
                 </View>
                 {/* <View style={styles.buttonSpace}>
                     <TouchableOpacity

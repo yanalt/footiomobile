@@ -11,14 +11,17 @@ import {
     View,
     AsyncStorage,
     TextInput,
-    FlatList
+    FlatList,
+    Alert
 } from 'react-native';
 import { ImageLoader } from 'three';
 
 
 let xauth = '';
 let portraits = [], flags = [];
-let currentSkinId = '';
+let NativeShopScreenHolder = {};
+let ownedFilteredSkins = [];
+let filteredSkins = [];
 preload();
 
 _storeData = async (str, val) => {
@@ -42,6 +45,51 @@ _retrieveData = async (str) => {
     }
 };
 
+function createAlert(item){
+    let title='',message='',content=[];
+    if(item.Owned){
+        title='Choose';
+        message='Are you sure you want to pick ' + item.name + '?';
+        content[0]={
+            text: 'OK',
+            onPress: () => {
+                NativeShopScreenHolder.OwnedhandleConfirm(item._id);
+            }
+        }
+        content[1]={
+            text: 'Cancel',
+            onPress: () => console.log("Cancel Pressed")
+        }
+    }else if(item.price>NativeShopScreenHolder.state.creditBalance){
+        title='Insufficient coins';
+        message='You need more coins to unlock ' + item.name + '...';
+        content[0]={
+            text: 'OK',
+            onPress: () => console.log("OK Pressed")
+        }
+    }else{
+        title='Unlock';
+        message='Are you sure you want to unlock ' + item.name + '? You can\'t undo this!';
+        content[0]={
+            text: 'OK',
+            onPress: () => {
+                NativeShopScreenHolder.handleConfirm(item._id,item.price);
+            }
+        }
+        content[1]={
+            text: 'Cancel',
+            onPress: () => console.log("Cancel Pressed")
+        }
+    }
+
+    Alert.alert(
+        title,
+        message,
+        content,
+        { cancelable: false }
+      );  
+}
+
 
 class NativeShopScreen extends Component {
     constructor(props) {
@@ -56,10 +104,22 @@ class NativeShopScreen extends Component {
             currentSkin: null,
             skinToken: ''
         };
-
+        this.forceUpdateHandler = this.forceUpdateHandler.bind(this);
+        NativeShopScreenHolder = this;
     }
 
     _isMounted = false;
+
+
+    forceUpdateHandler(){
+        console.log('refresh');
+        // this.forceUpdate();
+        this
+            .props
+            .navigation
+            .navigate('ReloadScreen');
+    };
+
 
     async componentDidUpdate() {
         await SkinAPI.setSkins(this.state.skins);
@@ -93,9 +153,6 @@ class NativeShopScreen extends Component {
         }).catch((e) => {
             console.log('err' + e);
         });
-        // await SkinAPI.updateLastTime().catch((e) => {
-        //     console.log('err' + e)
-        // });
         await SkinAPI.getSkins().then(skins => {
             if (this._isMounted)
                 this.setState({skins});
@@ -103,10 +160,8 @@ class NativeShopScreen extends Component {
             console.log('err' + e);
         });
         await SkinAPI.getCurrentSkin().then(currentSkin => {
-            if (this._isMounted){
+            if (this._isMounted)
                 this.setState({currentSkin});
-                currentSkinId=currentSkin;
-            }
         }).catch((e) => {
             console.log('err' + e);
         });
@@ -119,7 +174,7 @@ class NativeShopScreen extends Component {
     }
     async handleConfirm(skinId, price) {
         if (price <= this.state.creditBalance) {
-            axios({
+            await axios({
                 method: 'post',
                 headers: {
                     'x-auth': xauth
@@ -130,7 +185,7 @@ class NativeShopScreen extends Component {
                 }
             });
 
-            await SkinAPI.getSkins().then(async skins => { //
+            await SkinAPI.getSkins().then(async skins => { 
                 if (this._isMounted){
                     this.setState({skins});
                     await SkinAPI.setSkins(skins);}
@@ -149,6 +204,7 @@ class NativeShopScreen extends Component {
             }).catch((e) => {
                 console.log('err' + e);
             });
+            NativeShopScreenHolder.forceUpdateHandler();
         } else {
             // document.getElementById('creditBalanceTitle').style.backgroundColor = "red";
         }
@@ -158,7 +214,7 @@ class NativeShopScreen extends Component {
             this.setState({showCompleted: showCompleted, searchText: searchText.toLowerCase()});
     }
     async OwnedhandleConfirm(skinId) {
-        axios({
+        await axios({
             method: 'post',
             headers: {
                 'x-auth': xauth
@@ -172,7 +228,7 @@ class NativeShopScreen extends Component {
             if (this._isMounted)
                 this.setState({currentSkin});
         }).then(() => {
-            window.location.reload();
+            NativeShopScreenHolder.forceUpdateHandler();
         }).catch((e) => {
             console.log('err' + e);
         });
@@ -190,6 +246,7 @@ class NativeShopScreen extends Component {
             .navigation
             .navigate('DashboardScreen');
     }
+
 
     render() {
         let {
@@ -218,18 +275,25 @@ class NativeShopScreen extends Component {
             return skin;
         });
 
-        let filteredSkins = SkinAPI.filterSkins(ActualSkins, showCompleted, searchText);
-        let ownedFilteredSkins = SkinAPI.filterSkins(ActualOwnedSkins, showCompleted, searchText); // make this
+        filteredSkins = SkinAPI.filterSkins(ActualSkins, showCompleted, searchText);
+        ownedFilteredSkins = SkinAPI.filterSkins(ActualOwnedSkins, showCompleted, searchText);
 
         function Item( {item} ) {
-            let lockOpacity = 0.4, checkmarkOpacity = 0;
-            if(item.Owned)
+            let lockOpacity = 0.4, checkmarkOpacity = 0, coinOpacity = 1, pickText = '💰'+item.price;
+            if(item.Owned){
                 lockOpacity = 0;
-            if(item._id==currentSkinId)
+                coinOpacity = 0;
+                pickText = '   Pick';
+            }
+            if(item._id==NativeShopScreenHolder.state.currentSkin)
                 checkmarkOpacity = 0.5;
+            
             return (
                 <View style={{borderRadius:20,backgroundColor:0x001122,paddingLeft:20}}>
                     <Text>{item.name}</Text>
+                    <View onTouchEnd={()=>createAlert(item)} style={{paddingTop:18, width:50, height:50, backgroundColor:0x223322, borderRadius:50, position:'absolute',right:10,top:1,flexDirection: 'row',flexWrap: 'wrap',alignItems: 'flex-start'}}>
+                        <Text>{pickText}</Text>
+                    </View>
                     <Image source = {flags[item.sprite]}/>
                     <Image source = {portraits[item.sprite]}/>
                     <Image style={{height: 100, width: 100, opacity:lockOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/lock.png')}/>
@@ -247,7 +311,7 @@ class NativeShopScreen extends Component {
                 flexWrap: 'wrap',
                 alignItems: 'flex-start',
             }}>
-                <View style={{width:'50%', paddingRight:'20%'}}>
+                <View style={{width:'40%', paddingRight:'10%'}}>
                     <Text style={{fontSize:30,height:50}}>Locked Skins</Text>
                     <FlatList
                     data={filteredSkins}
@@ -257,13 +321,17 @@ class NativeShopScreen extends Component {
                 </View>
 
 
-                <View style={{width:'50%', paddingRight:'20%'}}>
+                <View style={{width:'40%', paddingRight:'10%'}}>
                         <Text style={{fontSize:30,height:50}}>Your Skins</Text>
                         <FlatList
                         data={ownedFilteredSkins}
                         renderItem={( item ) => {return <Item item={item.item}/>}}
                         keyExtractor={item => item.item}
                         />
+                </View>
+
+                <View>
+                    <Text style={{paddingTop:50}}>Coins: 💰{NativeShopScreenHolder.state.creditBalance}</Text>
                 </View>
 
                 <View
@@ -277,88 +345,6 @@ class NativeShopScreen extends Component {
                         onPress={() => {
                         this.handleExit()
                     }}/></View>
-
-{/* 
-                <View
-                    style={{
-                    position: 'absolute',
-                    bottom: '30%',
-                    right: 0
-                }}>
-                    <Button
-                        title="Exit!"
-                        onPress={() => {
-                        this.handleExit()
-                    }}/></View>
-
-                <View style={
-                    {textAlign: 'center'}
-                }>
-
-                    <SkinSearch onSearch={
-                        this.handleSearch
-                    }/>
-                    <View style={
-                            {
-                                width: '100%',
-                                textAlign: 'center'
-                            }
-                        }
-                        id="creditBalanceTitle">
-                        <Text>Coins: {creditBalance}</Text>
-                    </View>
-                    <View style={
-                        {
-                            width: '40%'
-                        }
-                    }>
-                        <View style={
-                            {
-                                width: '100%'
-                            }
-                        }>
-                            <Text 
-                                className="page-title">Unlocked Skins</Text>
-                        </View>
-                        <View 
-                            className="row"
-                            id="owned">
-                            <View className="column small-centered">
-                                <View className="container">
-                                    <SkinList skins={ownedFilteredSkins}
-                                        current={currentSkin}
-                                        onConfirm={
-                                            this.OwnedhandleConfirm
-                                        }/>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={
-                        {
-                            width: '40%'
-                        }
-                    }>
-                        <Text className="page-title">Locked Skins</Text>
-
-                        <View
-                            className="row">
-                            <View className="column small-centered small-11 medium-6 large-5">
-                                <View className="container">
-                                    <SkinList skins={filteredSkins}
-                                        onConfirm={
-                                            this.handleConfirm
-                                        }/>
-                                </View>
-                            </View>
-                        </View>
-
-                    </View>
-
-                </View> */}
-
-
             </View>
         );
     }
@@ -483,7 +469,7 @@ let SkinAPI = {
 
         // Filter by searchText
         filteredSkins = filteredSkins.filter((skin) => {
-            if (skin != undefined) {
+            if (skin != undefined && skin.name != undefined) {
                 let name = skin.name.toLowerCase();
                 return searchText.length === 0 || name.indexOf(searchText) > -1;
             }

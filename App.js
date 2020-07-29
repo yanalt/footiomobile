@@ -22,6 +22,7 @@ import ShopScreen from './screens/ShopScreen';
 import NativeShopScreen from './screens/NativeShopScreen';
 import NativeGameScreen from './screens/NativeGameScreen';
 import ThreeJSGameScreen from './screens/ThreeJSGameScreen';
+import ReloadScreen from './screens/ReloadScreen';
 
 
 import * as firebase from 'firebase';
@@ -54,7 +55,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   GetCoinsScreen: GetCoinsScreen,
   ShopScreen: ShopScreen,
   NativeShopScreen:NativeShopScreen,
-  ThreeJSGameScreen: ThreeJSGameScreen
+  ThreeJSGameScreen: ThreeJSGameScreen,
+  ReloadScreen: ReloadScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);
