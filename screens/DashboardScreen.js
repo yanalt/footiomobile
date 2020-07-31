@@ -38,9 +38,14 @@ _retrieveData = async(str) => {
 };
 
 class DashboardScreen extends Component {
-    state = {
-        isLoading: true
-    };
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true
+        };
+    }
+
     componentDidMount() {
 
         _retrieveData('x-auth').then((val) => {
@@ -61,7 +66,7 @@ class DashboardScreen extends Component {
         this
             .props
             .navigation
-            .navigate('ThreeJSGameScreen');
+            .navigate('RoomsScreen');
     }
 
     handleNative() {
@@ -102,24 +107,9 @@ class DashboardScreen extends Component {
                         style={styles.button}>
                         <Text style={styles.buttonText}>START ⚽</Text>
                     </TouchableOpacity>
-                    {/* <TextInput
-                        style={{
-                        height: 40,
-                        borderColor: 'gray',
-                        borderWidth: 1
-                    }}
-                        onChangeText={text => this.onChangeText(text)}
-                        placeholder='Nickname'/> */}
+                    
                 </View>
-                {/* <View style={styles.buttonSpace}>
-                    <TouchableOpacity
-                        onPress={() => {
-                        this.handleNative()
-                    }}
-                        style={styles.button}>
-                        <Text style={styles.buttonText}>NATIVE</Text>
-                    </TouchableOpacity>
-                </View> */}
+                
                 <View style={styles.buttonSpace}>
                     <TouchableOpacity
                         onPress={() => {

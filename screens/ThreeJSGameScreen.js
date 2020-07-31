@@ -189,7 +189,7 @@ function extractLocalFileName(str){
             break;
         result = str[str.length-1-i] + result;
     }
-    console.log(str);
+    // console.log(str);
     return result;
 }
 
@@ -204,9 +204,9 @@ async function copyAssetToCacheAsync(assetModule, localFilename) {
         if (! fileInfo.exists) {
             const asset = Asset.fromModule(assetModule);
             await asset.downloadAsync();
-            console.log(`copyAssetToCacheAsync ${
-                asset.localUri
-            } -> ${localUri}`);
+            // console.log(`copyAssetToCacheAsync ${
+            //     asset.localUri
+            // } -> ${localUri}`);
             await FileSystem.copyAsync({from: asset.localUri, to: localUri});
         }
         return localUri;
@@ -971,7 +971,7 @@ function setupSocket(socket) { // Handle ping.
                 kickSounds[randomIndex].playAsync();
             }
             catch(e){
-                console.log('lmao');
+                console.log('err'+e);
             }
         }
     });
@@ -1101,7 +1101,7 @@ function drawGoalDirection(team) {
                 let goalDirectionMaterial = new SpriteMaterial({map: goalDirection.img, color: 0xffffff});
                 goalDirection.sprite = new Sprite(goalDirectionMaterial);
                 goalDirection.sprite.position.set(global.gameWidth / 2, - global.gameHeight / 2, 0.5);
-                goalDirection.sprite.scale.set(10, 10, 1);
+                goalDirection.sprite.scale.set(20, 20, 1);
                 scene.add(goalDirection.sprite);
             }
         }
@@ -1454,20 +1454,7 @@ ThreeJSGameScreen.navigationOptions = {
 };
 
 
-// setInterval(()=>{
-
-//     try{
-//         socket.emit('err',{linkyStinky,x:'emit fgt',y:require('../assets/img/grass.jpeg')});
-//     }catch (e){
-//         console.log('rofl');
-//     }
-// },5000);
 
 
 
 
-
-//PROBLEMS:
-
-//textures don't show up in APK 
-//Exit button brings you to dashboard even if you are a guest (should take guests to login page)

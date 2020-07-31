@@ -3,6 +3,7 @@ import {
     Image,
     StyleSheet,
     Button,
+    TouchableOpacity,
     Text,
     View,
     AsyncStorage
@@ -12,6 +13,10 @@ import firebase from 'firebase';
 import axios from 'axios';
 import {hostConfig} from '../config';
 import * as Google from 'expo-google-app-auth';
+import { isLoaded } from 'expo-font';
+
+console.disableYellowBox = true;
+console.warn = function() {};
 
 _storeData = async(str, val) => {
     try {
@@ -89,6 +94,17 @@ handleReturningUser = function (email, token) {
 
 class LoginScreen extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoaded : false
+        }
+    }
+
+    componentDidMount(){
+        this.setState({isLoaded:true});
+    }
+
     isUserEqual = (googleUser, firebaseUser) => {
         console.log("isUserEqual");
         if (firebaseUser) {
@@ -144,6 +160,7 @@ class LoginScreen extends Component {
 
     signInWithGoogleAsync = async() => {
         try {
+            this.setState({isLoaded:false});
             const result = await Google
                 .logInAsync({
                     behavior: 'web', 
@@ -158,10 +175,12 @@ class LoginScreen extends Component {
                 this.onSignIn(result);
                 return result.accessToken;
             } else {
+                this.setState({isLoaded:true});
                 return {cancelled: true};
             }
         } catch (e) {
-            alert(e);
+            this.setState({isLoaded:true});
+            console.log(e);
             return {error: true};
         }
     };
@@ -183,14 +202,42 @@ class LoginScreen extends Component {
 
     render() {
         console.log("render");
-        return (
-            <View style={styles.container}>
-                <Button
-                    title="Sign In With Google"
-                    onPress={() => this.signInWithGoogleAsync()}/>
-                <Button title="Play as a guest! ⚽" onPress={() => this.handleGuest()}/>
-            </View>
-        );
+        if(this.state.isLoaded){
+            return (
+                <View style={styles.container}>
+                    {/* <Button
+                        title="Sign In With Google"
+                        onPress={() => this.signInWithGoogleAsync()}/>
+                    <Button title="Play as a guest! ⚽" onPress={() => this.handleGuest()}/> */}
+
+
+                    <Text style={styles.title}>FOOTIO</Text>
+                    
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            onPress={() => this.signInWithGoogleAsync()}
+                            style={styles.button}>
+                            <Text style={styles.buttonText}>SIGN IN WITH GOOGLE</Text>
+                        </TouchableOpacity>                        
+                    </View>
+
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            onPress={() => this.handleGuest()}
+                            style={styles.button}>
+                            <Text style={styles.buttonText}>PLAY AS A GUEST! ⚽</Text>
+                        </TouchableOpacity>                        
+                    </View>
+                
+                </View>
+            );
+        }else{
+            return (
+                <View style={styles.container}>
+                    <Text>Loading..</Text>
+                </View>
+            );
+        }
     }
 }
 //
@@ -204,66 +251,31 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0.4)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center'
+    
+    button: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
-    contentContainer: {
-        paddingTop: 30
+    buttonSignOut: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
-    welcomeContainer: {
-        alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20
+    buttonSpaceSignOut: {
+        padding: 10,
+        position: 'absolute',
+        bottom: '10%',
+        right: 0
     },
-    welcomeImage: {
-        width: 100,
-        height: 80,
-        resizeMode: 'contain',
-        marginTop: 3,
-        marginLeft: -10
+    buttonText: {
+        fontSize: 30
     },
-    getStartedContainer: {
-        alignItems: 'center',
-        marginHorizontal: 50
+    buttonSpace: {
+        width: '70%',
+        padding: 5
     },
-    homeScreenFilename: {
-        marginVertical: 7
-    },
-    codeHighlightText: {
-        color: 'rgba(96,100,109, 0.8)'
-    },
-    codeHighlightContainer: {
-        backgroundColor: 'rgba(0,0,0,0.05)',
-        borderRadius: 3,
-        paddingHorizontal: 4
-    },
-    getStartedText: {
-        fontSize: 17,
-        color: 'rgba(96,100,109, 1)',
-        lineHeight: 24,
-        textAlign: 'center'
-    },
-    tabBarInfoText: {
-        fontSize: 17,
-        color: 'rgba(96,100,109, 1)',
-        textAlign: 'center'
-    },
-    navigationFilename: {
-        marginTop: 5
-    },
-    helpContainer: {
-        marginTop: 15,
-        alignItems: 'center'
-    },
-    helpLink: {
-        paddingVertical: 15
-    },
-    helpLinkText: {
-        fontSize: 14,
-        color: '#2e78b7'
+    title: {
+        fontSize: 50
     }
 });
