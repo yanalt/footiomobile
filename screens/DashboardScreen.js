@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
+import AdBar from '../components/AdBar';
 
 {/* <Text>{firebase.auth().currentUser.email}</Text>
 <Text>{firebase.auth().currentUser.displayName}</Text> //a
@@ -144,6 +145,7 @@ class DashboardScreen extends Component {
                         }}>Sign out</Text>
                     </TouchableOpacity>
                 </View>
+                <AdBar/>
             </View>
         );
 
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        paddingTop:20,
         backgroundColor: '#fff'
     },
     button: {

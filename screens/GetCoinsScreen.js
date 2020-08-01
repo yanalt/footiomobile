@@ -1,18 +1,15 @@
 import React, {Component} from 'react';
 import {
-    Image,
-    Platform,
     StyleSheet,
     Text,
     Button,
     View,
     AsyncStorage,
-    ScrollView,
     TouchableOpacity
 } from 'react-native';
 import axios from 'axios';
-import firebase from 'firebase';
-import {hostConfig} from '../config';
+import {hostConfig,adMobConfig} from '../config';
+import AdBar from '../components/AdBar';
 import {AdMobBanner, AdMobInterstitial, PublisherBanner, AdMobRewarded} from 'expo-ads-admob';
 console.disableYellowBox = true;
 
@@ -60,7 +57,7 @@ class GetCoinsScreen extends Component {
     componentDidMount() {
         // console.log(AdMobRewarded);
         AdMobRewarded.setTestDeviceID([AdMobRewarded.simulatorId]);
-        AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+        AdMobRewarded.setAdUnitID(adMobConfig.AdMobRewardedID);
 
         AdMobRewarded.addEventListener('rewardedVideoDidRewardUser', (reward) => {
             this.handleAfterReward(reward);
@@ -160,16 +157,7 @@ class GetCoinsScreen extends Component {
                     </Text>
                 </TouchableOpacity>
 
-                <View
-                    style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0
-                }}>
-
-                    <AdMobBanner
-                        adSize="smartBannerPortrait"
-                        adUnitID="ca-app-pub-3940256099942544/2934735716"/></View>
+                <AdBar/>
                 <View
                     style={{
                     position: 'absolute',
@@ -205,6 +193,6 @@ const styles = StyleSheet.create({
         padding: 10
     },
     buttonText: {
-        fontSize: 30
+        fontSize: 20
     }
 });

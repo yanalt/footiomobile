@@ -13,7 +13,7 @@ import firebase from 'firebase';
 import axios from 'axios';
 import {hostConfig} from '../config';
 import * as Google from 'expo-google-app-auth';
-import { isLoaded } from 'expo-font';
+import AdBar from '../components/AdBar';
 
 console.disableYellowBox = true;
 console.warn = function() {};
@@ -228,6 +228,7 @@ class LoginScreen extends Component {
                             <Text style={styles.buttonText}>PLAY AS A GUEST! ⚽</Text>
                         </TouchableOpacity>                        
                     </View>
+                    <AdBar/>
                 
                 </View>
             );

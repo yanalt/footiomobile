@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, AsyncStorage, Button,StatusBar, FlatList} from 'react-native';
+import {StyleSheet, Text, View, AsyncStorage, Button,TouchableOpacity, FlatList} from 'react-native';
 import {hostConfig} from '../config';
 import axios from 'axios';
+import AdBar from '../components/AdBar';
 
 _storeData = async(str, val) => {
     try {
@@ -28,8 +29,14 @@ let xauth = '';
 let RoomsScreenHolder = '';
 
 const Item = ({ location,playerAmount,difficulty,ip,port }) => (
-    <View>
-      <Text>{location} {port} {difficulty} {playerAmount}/10 </Text>
+    <View style={styles.buttonSpace}>
+        <TouchableOpacity
+            onPress={() => {
+                RoomsScreenHolder.handleRoomChoice(ip,port)
+        }}
+            style={styles.button}>
+            <Text style={styles.buttonText}>{location} {port} {difficulty} {playerAmount}/10</Text>
+        </TouchableOpacity>
     </View>
   );
 
@@ -50,9 +57,24 @@ class RoomsScreen extends Component {
         setInterval(this.refreshServers,10*1000);
     }
 
+    handleRoomChoice(ip,port){
+        console.log(ip+':'+port);
+        this.props.navigation.navigate('ThreeJSGameScreen',{ip,port});
+    }
+
+    handleQuickRoom(str){
+        let arr = this.state.serverList;
+        for (let i = 0; i < arr.length; i++) {
+            if(arr[i].difficulty==str&&arr[i].playerAmount<=9){
+                this.handleRoomChoice(arr[i].ip,arr[i].port);
+                return;
+            }
+        }
+        
+    }
+
     renderItem = ({ item }) => {
         
-        console.log(item);
         return (
         <Item 
             location={item.location} 
@@ -113,26 +135,63 @@ class RoomsScreen extends Component {
         }
         return (
             <View style={styles.container}>
+                <View style={styles.subContainer}>
+                    <Text style={styles.title}>QUICK GAME</Text>
 
-                <FlatList
-                        data={this.state.serverList}
-                        renderItem={this.renderItem}
-                        keyExtractor={item => item.id} 
-                        extraData={this.state}
-                        />
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                RoomsScreenHolder.handleQuickRoom('easy')
+                        }}
+                            style={styles.button}>
+                            <Text style={styles.bigButtonText}>EASY 👶</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                <View
-                    style={{
-                    position: 'absolute',
-                    top: '30%',
-                    right: 0
-                }}>
-                    <Button
-                        title="Exit!"
-                        style={{}}
-                        onPress={() => {
-                        this.handleExit()
-                    }}/></View>
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                RoomsScreenHolder.handleQuickRoom('normal')
+                        }}
+                            style={styles.button}>
+                            <Text style={styles.bigButtonText}>NORMAL 🙂</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                RoomsScreenHolder.handleQuickRoom('hard')
+                        }}
+                            style={styles.button}>
+                            <Text style={styles.bigButtonText}>HARD 💀</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </View>
+                <View style={styles.subContainer}>
+                    <Text style={styles.title}>PICK ROOM</Text>
+                    <FlatList
+                            data={this.state.serverList}
+                            renderItem={this.renderItem}
+                            keyExtractor={item => item.id} 
+                            extraData={this.state}
+                            />
+
+                </View>
+                    <View
+                        style={{
+                        position: 'absolute',
+                        top: '30%',
+                        right: 0
+                    }}>
+                        <Button
+                            title="Exit!"
+                            style={{}}
+                            onPress={() => {
+                            this.handleExit()
+                        }}/></View>
+                <AdBar/>
             </View>
         );
     }
@@ -148,7 +207,37 @@ RoomsScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        paddingTop:30,
+        paddingLeft:30,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        justifyContent: 'center'
+    },
+    button: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 2
+    },
+    buttonText: {
+        fontSize: 15
+    },
+    bigButtonText: {
+        fontSize: 18,
+        paddingVertical: 10
+    },
+    buttonSpace: {
+        width: '100%',
+        padding: 3
+    },
+    subContainer:{
+        width: '40%',
+        height: '80%',
+        alignItems: "center",
+    },
+    title: {
+        fontSize: 20
     }
 
 });

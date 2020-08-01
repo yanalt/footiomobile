@@ -255,8 +255,12 @@ class ThreeJSGameScreen extends React.Component {
                opacity: 0
            },
            goalScoredText: '',
-           styles : {}
+           styles : {},
+           ip:this.props.navigation.state.params.ip,
+           port:this.props.navigation.state.params.port,
         }
+        if(this.state.ip=='localhost')
+            this.state.ip='10.0.0.5';
         reactAppHolder = this;
     }
 
@@ -267,7 +271,6 @@ class ThreeJSGameScreen extends React.Component {
     }
 
     componentDidMount(){
-
         loadCSS(Dimensions.get('window').width,Dimensions.get('window').height);
     }
 
@@ -360,21 +363,11 @@ function checkGoal(){
         if(celebration==false){
             try{
                 netSounds[randomIndex].setPositionAsync(0);
-            }
-            catch(e){
-                console.log('lol');
-            }
-            try{
                 netSounds[randomIndex].setVolumeAsync(0.1);
-            }
-            catch(e){
-                console.log('lol');
-            }
-            try{
                 netSounds[randomIndex].playAsync();
             }
             catch(e){
-                console.log('lol');
+                console.log('sound err');
             }
         }
 
@@ -821,10 +814,9 @@ function loadCSS(w, h){
 
 function startGame() {
     global.playerName = "";
-    console.log(socket);
     if (! socket) {
-        console.log('connecting...');
-        socket = io.connect('http://10.0.0.5:3002', {
+        console.log('connecting to ' + 'http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port);
+        socket = io.connect('http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
             transports: ['websocket'],
             jsonp: false
         });
