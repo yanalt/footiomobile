@@ -26,7 +26,6 @@ class LoadingScreen extends Component {
             .getIdToken(/* forceRefresh */
             true)
             .then(function (idToken) {
-                // console.log(idToken);
 
                 axios({
                     method: 'post',
@@ -44,6 +43,8 @@ class LoadingScreen extends Component {
                             .navigation
                             .navigate('DashboardScreen');
                     });
+                }).catch((e)=>{
+                    console.log(e);
                 })
             })
             .catch((e) => {

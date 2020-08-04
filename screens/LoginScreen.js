@@ -191,8 +191,7 @@ class LoginScreen extends Component {
             this
                 .props
                 .navigation
-                .navigate('ThreeJSGameScreen');
-                console.log("lul");
+                .navigate('RoomsScreen');
         } catch (e) {
             console.log(e);
             alert(e);
@@ -218,7 +217,7 @@ class LoginScreen extends Component {
                             onPress={() => this.signInWithGoogleAsync()}
                             style={styles.button}>
                             <Text style={styles.buttonText}>SIGN IN WITH GOOGLE</Text>
-                        </TouchableOpacity>                        
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.buttonSpace}>
@@ -226,7 +225,7 @@ class LoginScreen extends Component {
                             onPress={() => this.handleGuest()}
                             style={styles.button}>
                             <Text style={styles.buttonText}>PLAY AS A GUEST! ⚽</Text>
-                        </TouchableOpacity>                        
+                        </TouchableOpacity>
                     </View>
                     <AdBar/>
                 
@@ -247,8 +246,8 @@ export default LoginScreen;
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        marginTop: 100,
-        marginBottom: 20,
+        marginTop: 70,
+        marginBottom: 0,
         flex: 1,
         backgroundColor: '#fff'
     },

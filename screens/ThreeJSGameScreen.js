@@ -1,43 +1,30 @@
-import {ExpoWebGLRenderingContext, GLView} from 'expo-gl';
+import {GLView} from 'expo-gl';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import ExpoTHREE, {Renderer, loadAsync, loaderClassForExtension, loadTextureAsync} from 'expo-three';
+import ExpoTHREE, {Renderer} from 'expo-three';
 import {Asset} from 'expo-asset';
 import * as React from 'react';
 import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
+import AdBar from '../components/AdBar';
 
-import {View,TouchableOpacity,
+import {View,
     Dimensions,Text,Platform,
-    AsyncStorage,Image,I18nManager} from 'react-native';
+    AsyncStorage,Image,I18nManager,StatusBar} from 'react-native';
 import io from 'socket.io-client';
 import {
-    AmbientLight,
-    Loader,
-    BoxBufferGeometry,
-    Fog,
-    GridHelper,
     Mesh,
-    MeshStandardMaterial,
     PerspectiveCamera,
     MeshBasicMaterial,
     CircleGeometry,CylinderBufferGeometry,
-    PointLight,
     Scene,
-    SpotLight,
     Sprite,
     SpriteMaterial,
-    TextureLoader,
     RepeatWrapping,
     LineBasicMaterial,
     Vector3,
     LineLoop,
     BufferGeometry,
     Line,
-    Points,
-    TextGeometry,
-    FontLoader,
-    MeshPhongMaterial,
-    ImageLoader
 } from 'three';
 I18nManager.allowRTL(false);
 
@@ -49,30 +36,21 @@ let instructions = 0;
 let timeout;
 let reactAppHolder;
 let ballImg;
-let ballFrames = [];
 let frames = 0;
 let characters = [];
 let emojis = [];
 let grassTexture;
 let goalNet;
 let socket;
-let directionButton;
 let startKick = 0;
-let turboButton;
-let kickButton;
-let reason;
-let currentFrame = 0;
 let comArr = [];
 let comIndex = 0;
 let celebration = false;
 let ballSprite,
     ballMaterial;
-let characterSprite,
-    characterMaterial;
 let kickSounds = [];
 let netSounds = [];
 let soundCount = 0;
-let linkyStinky;
 
 const scene = new Scene();
 
@@ -311,6 +289,8 @@ class ThreeJSGameScreen extends React.Component {
                     {flex: 1}
                 }
                 onContextCreate={handleContextCreate}/>
+                <AdBar top="true"/>
+                <StatusBar hidden />
                 
                 <View onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={reactAppHolder.state.styles.buttonsOverlayCSS}></View>
                 <View onTouchMove={handleDirection} style={reactAppHolder.state.styles.directionCSS}><Text style={{fontSize:50, textAlign:'center'}}>🕹</Text></View>
@@ -318,7 +298,7 @@ class ThreeJSGameScreen extends React.Component {
                 <View onTouchStart={handleSprint} style={reactAppHolder.state.styles.sprintCSS}><Text style={{fontSize:50, textAlign:'center'}}>🏃</Text></View>
                 {/* <View style={reactAppHolder.state.styles.centerCSS}></View> */}
                 <View onTouchStart={this.handleExit} style={reactAppHolder.state.styles.exitCSS}><Text>Exit</Text></View>
-                <Image onLoad={(k)=>{ linkyStinky = k.nativeEvent.uri;}} onTouchStart={()=>{handleEmoji(0);}} style={reactAppHolder.state.styles.grinCSS} source={require('../assets/img/emojis/grin.png')}/>
+                <Image onTouchStart={()=>{handleEmoji(0);}} style={reactAppHolder.state.styles.grinCSS} source={require('../assets/img/emojis/grin.png')}/>
                 <Image onTouchStart={()=>{handleEmoji(1);}} style={reactAppHolder.state.styles.angryCSS} source={require('../assets/img/emojis/angry.png')}/>
                 <Image onTouchStart={()=>{handleEmoji(2);}} style={reactAppHolder.state.styles.pooCSS} source={require('../assets/img/emojis/poo.png')}/>
                 <Image onTouchStart={()=>{handleEmoji(3);}} style={reactAppHolder.state.styles.tongueCSS} source={require('../assets/img/emojis/tongue.png')}/>
@@ -815,15 +795,20 @@ function loadCSS(w, h){
 function startGame() {
     global.playerName = "";
     if (! socket) {
-        console.log('connecting to ' + 'http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port);
-        socket = io.connect('http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
-            transports: ['websocket'],
-            jsonp: false
-        });
-        socket.on('connect', () => {
-            console.log('connected to socket server');
-        });
-        setupSocket(socket);
+        try{
+            console.log('connecting to ' + 'http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port);
+            socket = io.connect('http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
+                transports: ['websocket'],
+                jsonp: false
+            });
+            socket.on('connect', () => {
+                console.log('connected to socket server');
+            });
+            setupSocket(socket);
+        }catch(e){
+            console.log(e);
+            reactAppHolder.handleExit();
+        }
     }
 
     socket.emit('windowResized',

@@ -9,7 +9,7 @@
         "appId": "1:759889128579:web:d7962059b7fe6e93"
     },
     "hostConfig":{
-        "address": "http://10.0.0.5:3001"
+        "address": "https://footio.com.de"
     },
     "adMobConfig":{
         "AdBarID": "ca-app-pub-3940256099942544/2934735716",
