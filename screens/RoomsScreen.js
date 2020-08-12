@@ -51,10 +51,28 @@ class RoomsScreen extends Component {
         RoomsScreenHolder = this;
     }
 
-
     componentDidMount() {
+        this.loadSkinConfirm();
         this.refreshServers();
         setInterval(this.refreshServers,10*1000);
+    }
+
+    async loadSkinConfirm(){
+        _retrieveData('x-auth').then((val) => {
+            //   console.log(val);
+            xauth = val;
+            axios({
+                method: 'post',
+                headers: {
+                  'x-auth': xauth
+                },
+                url: hostConfig.address +'/users/skintoken'
+              }).then(response=>{
+                _storeData('skinToken',response.headers.skin);
+              });
+        }).catch((e) => {
+            console.log(e);
+        });
     }
 
     handleRoomChoice(ip,port){

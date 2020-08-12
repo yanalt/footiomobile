@@ -5,7 +5,7 @@ import {Asset} from 'expo-asset';
 import * as React from 'react';
 import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
-import AdBar from '../components/AdBar';
+// import AdBar from '../components/AdBar';
 
 import {View,
     Dimensions,Text,Platform,
@@ -289,7 +289,7 @@ class ThreeJSGameScreen extends React.Component {
                     {flex: 1}
                 }
                 onContextCreate={handleContextCreate}/>
-                <AdBar top="true"/>
+                {/* <AdBar top="true"/> */}
                 <StatusBar hidden />
                 
                 <View onTouchMove={handleTouchMove} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={reactAppHolder.state.styles.buttonsOverlayCSS}></View>
@@ -394,19 +394,20 @@ function handleLayout(event){
 }
 
 function handleDirection(event){
+    console.log('1');
     if(global.centerX&&global.centerY){
         instructions++;
         target.x=event.nativeEvent.touches[0].pageX-global.centerX; target.y=event.nativeEvent.touches[0].pageY-global.centerY;
-        // let str = '';
+        // let str = ''
         //     str += '(' + Math.floor(event.nativeEvent.touches[0].locationX) + ',' + Math.floor(event.nativeEvent.touches[0].locationY) + ') ';
     }
 }
 
 function handleTouchMove(event){
-    if(global.centerX&&global.centerY){
+    if(global.centerX&&global.centerY){ //need more than 1.5
         instructions++; // check why it is slow to move down compared to up
-        target.x=1.5*(event.nativeEvent.touches[0].pageX-global.centerX); 
-        target.y=1.5*(event.nativeEvent.touches[0].pageY-global.centerY);
+        target.x=5*(event.nativeEvent.touches[0].pageX-global.centerX); 
+        target.y=5*(event.nativeEvent.touches[0].pageY-global.centerY);
         // let str = '';
         //     str += '(' + Math.floor(event.nativeEvent.touches[0].locationX) + ',' + Math.floor(event.nativeEvent.touches[0].locationY) + ') ';
     }
@@ -575,6 +576,10 @@ async function handleContextCreate(gl) {
 
             if(frames%10==0)
                 soundCount=0;
+            if(frames%100==0){
+                global.startPingTime = Date.now();
+                socket.emit('pingcheck');
+            }
 
             movePlayers();
             drawGoalkeepers(goalkeepers);
@@ -796,14 +801,17 @@ function startGame() {
     global.playerName = "";
     if (! socket) {
         try{
-            console.log('connecting to ' + 'http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port);
-            socket = io.connect('http://'+reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
+            console.log('connecting to ' + reactAppHolder.state.ip+':'+reactAppHolder.state.port);
+            socket = io.connect(reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
                 transports: ['websocket'],
                 jsonp: false
             });
             socket.on('connect', () => {
                 console.log('connected to socket server');
             });
+            socket.on('connect_error',(e)=>{
+                console.log(e);
+            })
             setupSocket(socket);
         }catch(e){
             console.log(e);
@@ -819,7 +827,8 @@ function startGame() {
     socket.emit('respawn');
 }
 
-function setupSocket(socket) { // Handle ping.
+async function setupSocket(socket) { // Handle ping.
+    let conf = await _retrieveData('skinToken');
     socket.on('pongcheck', function () {
         var latency = Date.now() - global.startPingTime;
         // debug('Latency: ' + latency + 'ms');
@@ -835,16 +844,18 @@ function setupSocket(socket) { // Handle ping.
     socket.on('disconnect', function () {
         socket.close();
         global.disconnected = true;
+        reactAppHolder.handleExit();
     });
 
     // Handle connection.
     socket.on('welcome', function (playerSettings) {
+        console.log(playerSettings.team);
         player = playerSettings;
         player.name = global.playerName;
         player.screenWidth = global.screenWidth;
         player.screenHeight = global.screenHeight;
         player.target = target;
-        player.conf = 'lol';
+        player.conf = conf;
         player.name = 'lol';
 
         global.player = player;
@@ -903,6 +914,11 @@ function setupSocket(socket) { // Handle ping.
                 instructions++;
                 if (usersExpanded[i].id == u.id) {
                     usersExpanded[i].emoji=u.emoji;
+                    if(usersExpanded[i].team != u.team){
+                        usersExpanded[i].team = u.team;
+                        usersExpanded[i].characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
+                    }
+                    
                     return;
                 }
             }
@@ -913,7 +929,8 @@ function setupSocket(socket) { // Handle ping.
         for (let i = 0; i < usersExpanded.length; i++) {
             instructions+=serverUsers.length;
             let found = serverUsers.find(u => u.id==usersExpanded[i].id);
-            if(!found){
+            if(found == undefined){
+                console.log('spliced 1');
                 scene.remove(usersExpanded[i].characterCircle);
                 scene.remove(usersExpanded[i].characterSprite);
                 usersExpanded.splice(i, 1);
@@ -925,15 +942,18 @@ function setupSocket(socket) { // Handle ping.
     socket.on('playerDisconnect', function (data) {
         for (let i = 0; i < usersExpanded.length; i++) {
             instructions++;
-            if (usersExpanded[i].id == data.id) 
+            if (usersExpanded[i].id == data.id){ 
+                console.log('spliced 2');
+                scene.remove(usersExpanded[i].characterCircle);
+                scene.remove(usersExpanded[i].characterSprite);
                 usersExpanded.splice(i, 1);
+            }
             
         }
     });
     
     socket.on('kick', function (data) {
         global.gameStart = false;
-        reason = data;
         global.kicked = true;
         socket.close();
     });
@@ -982,10 +1002,10 @@ function drawCircle(centerX, centerY, radius, sides, name, color, filled) {
 
 
 function drawBall(ball) {
-    if (! ball.frame) 
+    if (ball.frame==undefined) {
         ball.frame = 0;
-    
-    ballImg.offset.x = ball.frame / 10;
+    }
+    ballImg.offset.x = Math.floor(ball.frame / 10)/10;
 
     if (ballSprite) {
         ballSprite.position.set(ball.x, - ball.y,10);
@@ -1088,25 +1108,21 @@ function drawGoalDirection(team) {
 
 
 async function loadCharacterSprites(u) {
-    if (! u.characterSprite) {
+    if (! u.characterSprite || !u.isActive) {
         let texture = await loadTextureSafely(characters[u.skinsprite]);
 
-        // await loadAsync(characters[u.skinsprite]).then((res) => {
-            texture.wrapT = RepeatWrapping;
-            texture.wrapS = RepeatWrapping;
-            texture.repeat.x = 1 / 12;
-            texture.repeat.y = 1 / 8;
-            u.characterMaterial = new MeshBasicMaterial({map: texture, transparent:true, fog: false});
+        texture.wrapT = RepeatWrapping;
+        texture.wrapS = RepeatWrapping;
+        texture.repeat.x = 1 / 12;
+        texture.repeat.y = 1 / 8;
+        u.characterMaterial = new MeshBasicMaterial({map: texture, transparent:true, fog: false});
 
-            u.characterGeometry = new THREE.PlaneGeometry( 120, 200);
-            u.characterSprite = new THREE.Mesh( u.characterGeometry, u.characterMaterial );
-            // u.characterSprite.scale.set(120, 200, 1);
-            u.characterSprite.position.set(global.gameWidth / 2, - global.gameHeight / 2, -3);
-            u.characterSprite.name = u.id;
-            scene.add(u.characterSprite);
-        // }).catch((e) => {
-        //     console.log(e);
-        // });
+        u.characterGeometry = new THREE.PlaneGeometry( 120, 200);
+        u.characterSprite = new THREE.Mesh( u.characterGeometry, u.characterMaterial );
+    
+        u.characterSprite.position.set(global.gameWidth / 2, - global.gameHeight / 2, -3);
+        u.characterSprite.name = u.id;
+        scene.add(u.characterSprite);
     }
     if (! u.emojiSprite) {
         let index = 0;
@@ -1128,6 +1144,9 @@ async function loadCharacterSprites(u) {
     if (! u.characterCircle) {
         u.characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
         scene.add(u.characterCircle);
+    }else{
+        u.characterCircle.color = u.team ? 'red' : 'blue';
+        u.characterCircle.id = u.id;
     }
     return u;
 }

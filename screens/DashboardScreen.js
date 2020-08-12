@@ -89,6 +89,12 @@ class DashboardScreen extends Component {
             .navigation
             .navigate('GetCoinsScreen');
     }
+    handleCredits() {
+        this
+            .props
+            .navigation
+            .navigate('CreditsScreen');
+    }
     render() {
         if (this.state.isLoading) {
             return (
@@ -145,6 +151,17 @@ class DashboardScreen extends Component {
                         }}>Sign out</Text>
                     </TouchableOpacity>
                 </View>
+                <View style={styles.buttonSpaceCredits}>
+                    <TouchableOpacity
+                        onPress={() => {this.handleCredits()
+                        }}
+                        style={styles.buttonCredits}>
+                        <Text
+                            style={{
+                            fontSize: 15
+                        }}>Credits</Text>
+                    </TouchableOpacity>
+                </View>
                 <AdBar/>
             </View>
         );
@@ -177,6 +194,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: '10%',
         right: 0
+    },
+    buttonSpaceCredits:{
+        padding: 10,
+        position: 'absolute',
+        bottom: '30%',
+        right: 0
+    },
+    buttonCredits:{
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
     buttonText: {
         fontSize: 30
