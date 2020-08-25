@@ -6,7 +6,8 @@ import {
     StyleSheet,
     Text,
     View,
-    AsyncStorage
+    AsyncStorage,
+    Platform
 } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
@@ -16,7 +17,15 @@ class LoadingScreen extends Component {
 
     componentDidMount() {
         console.log("LoadingScreen.js componentDidMount");
-        this.checkIfLoggedIn();
+        if(Platform.OS=='android'||Platform.OS=='ios'){
+            console.log(Platform.OS);
+            this.checkIfLoggedIn();
+        }else{
+            this
+                .props
+                .navigation
+                .navigate('GuestScreen');
+        }
     }
     handleLoggedIn(user) {
         let deez = this;

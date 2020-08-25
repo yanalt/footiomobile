@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component,PureComponent} from 'react';
 import axios from 'axios';
 import {hostConfig} from '../config';
 import {
@@ -14,7 +14,6 @@ import {
     FlatList,
     Alert
 } from 'react-native';
-import { ImageLoader } from 'three';
 
 
 let xauth = '';
@@ -278,29 +277,14 @@ class NativeShopScreen extends Component {
         filteredSkins = SkinAPI.filterSkins(ActualSkins, showCompleted, searchText);
         ownedFilteredSkins = SkinAPI.filterSkins(ActualOwnedSkins, showCompleted, searchText);
 
-        function Item( {item} ) {
-            let lockOpacity = 0.4, checkmarkOpacity = 0, coinOpacity = 1, pickText = '💰'+item.price;
-            if(item.Owned){
-                lockOpacity = 0;
-                coinOpacity = 0;
-                pickText = '   Pick';
-            }
-            if(item._id==NativeShopScreenHolder.state.currentSkin)
-                checkmarkOpacity = 0.5;
-            
-            return (
-                <View style={{borderRadius:20,backgroundColor:0x001122,paddingLeft:20}}>
-                    <Text>{item.name}</Text>
-                    <View onTouchEnd={()=>createAlert(item)} style={{paddingTop:18, width:50, height:50, backgroundColor:0x223322, borderRadius:50, position:'absolute',right:10,top:1,flexDirection: 'row',flexWrap: 'wrap',alignItems: 'flex-start'}}>
-                        <Text>{pickText}</Text>
-                    </View>
-                    <Image source = {flags[item.sprite]}/>
-                    <Image source = {portraits[item.sprite]}/>
-                    <Image style={{height: 100, width: 100, opacity:lockOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/lock.png')}/>
-                    <Image style={{height: 100, width: 100, opacity:checkmarkOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/checkmark.png')}/>
-                </View>
-            );
-          }
+
+        if(Array.isArray(ownedFilteredSkins)){
+            ownedFilteredSkins.sort((a,b)=>{ 
+                return b._id==NativeShopScreenHolder.state.currentSkin&&a._id!=NativeShopScreenHolder.state.currentSkin;
+            });
+        }
+
+       
 
         return (
             <View style={{
@@ -314,6 +298,7 @@ class NativeShopScreen extends Component {
                 <View style={{width:'40%', paddingRight:'10%'}}>
                     <Text style={{fontSize:30,height:50}}>Locked Skins</Text>
                     <FlatList
+                    style={{width:200}}
                     data={filteredSkins}
                     renderItem={( item ) => {return <Item item={item.item}/>}}
                     keyExtractor={item => item.item}
@@ -323,7 +308,8 @@ class NativeShopScreen extends Component {
 
                 <View style={{width:'40%', paddingRight:'10%'}}>
                         <Text style={{fontSize:30,height:50}}>Your Skins</Text>
-                        <FlatList
+                        <FlatList 
+                        style={{width:200}}
                         data={ownedFilteredSkins}
                         renderItem={( item ) => {return <Item item={item.item}/>}}
                         keyExtractor={item => item.item}
@@ -480,209 +466,40 @@ let SkinAPI = {
     }
 };
 
-class SkinSearch extends Component {
-    handleSearch() {
-        let showCompleted = true;
-        let searchText = this.refs.searchText.value;
 
-        this.props.onSearch(showCompleted, searchText);
-    }
-    render() {
-        let inputStyle = {},
-            buttonTags = "button expanded";
-        if (window.orientation != 'undefined' && window.orientation != undefined) {
-            inputStyle = {
-                fontSize: '200%',
-                height: '10%',
-                width: '70%',
-                textAlign: 'center'
-            };
-            buttonTags = "button large expanded";
+
+
+
+class Item extends PureComponent{
+        constructor(props) {
+            super(props);
         }
-        return (
-            <View className="container__header">
-                <View>
-                    <TextInput type="search"
-                        style={inputStyle}
-                        ref="searchText"
-                        placeholder="Click here to search skins"
-                        onChange={
-                            this.handleSearch
-                        }/>
-                </View>
-            </View>
-        )
-    }
-};
-
-class SkinList extends Component {
-    render() {
-        let {skins, current} = this.props;
-        let renderSkins = () => {
-
-            if (skins) {
-                if (skins.length === 0) {
-                    return (
-                        <View className="container__message">
-                            <Text>Nothing To Show</Text>
-                        </View>
-                    );
-                }
-
-                return skins.map((skin) => {
-                    return (
-                        <Skin current={current}
-                            key={
-                                skin._id
-                            }
-                            {...skin}
-                            onConfirm={
-                                this.props.onConfirm
-                            }/>
-                    );
-                });
-            }else{
-                return (<View>
-                    <Text>None found.</Text>
-                </View>)
+        render(){
+            let lockOpacity = 0.4, checkmarkOpacity = 0, coinOpacity = 1, pickText = '💰'+this.props.item.price;
+            if(this.props.item.Owned){
+                lockOpacity = 0;
+                coinOpacity = 0;
+                pickText = '   Pick';
             }
-        };
-
-        return (
-                renderSkins()
-        )
-    }
-}
-
-
-class Skin extends Component {
-    render() {
-        let inputStyle = {},
-            buttonTags = {
-                fontSize: 27
-            },
-            hiddenButtonTags = {
-                fontSize: 27,
-                display: 'none'
-            };
-        let skinContainer = {
-            border: '2px solid blue',
-            borderRadius: 20,
-            padding: 10,
-            fontSize: 27
-        }
-        // if(window.orientation!='undefined'&&window.orientation!=undefined){
-        //     inputStyle={fontSize: '500%', height:100};
-        //     buttonTags="button large expanded";
-        // }
-        let {
-            _id,
-            name,
-            completed,
-            icon,
-            sprite,
-            price,
-            current
-        } = this.props;
-        let idConfirm = _id + "Confirm";
-        let idCancel = _id + "Cancel";
-        let idUnlock = _id + "Unlock";
-        let here = "";
-        if (_id == current) {
-            here = " - SELECTED";
-        }
-
-        if (this.props.Owned != undefined && this.props.Owned == true) {
+            if(this.props.item._id==NativeShopScreenHolder.state.currentSkin)
+                checkmarkOpacity = 0.5;
+            
             return (
-                <View style={skinContainer}>
-                    <View>
-                        <Text>{name}
-                            {here}</Text>
+                <View style={{borderRadius:20,backgroundColor:0x001122,paddingLeft:20, width:190, height: 250}}>
+                    <Text>{this.props.item.name}</Text>
+                    <View onTouchEnd={()=>createAlert(this.props.item)} style={{paddingTop:18, width:50, height:50, backgroundColor:0x223322, borderRadius:50, position:'absolute',right:10,top:1,flexDirection: 'row',flexWrap: 'wrap',alignItems: 'flex-start'}}>
+                        <Text>{pickText}</Text>
                     </View>
-                    <View>
-
-                        <Image source={portraits[sprite]}/>
-                        <Image source={flags[sprite]}/>
-                        <TouchableOpacity style={buttonTags}
-                            id={idUnlock}
-                            onClick={
-                                () => { // this.props.onToggle(_id);
-                                    document.getElementById(idConfirm).style.display = "inline";
-                                    document.getElementById(idCancel).style.display = "inline";
-                                    document.getElementById(idUnlock).style.display = "none";
-                                }
-                        }>
-                            <Text>Choose {name}!</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={hiddenButtonTags}
-                            id={idCancel}
-                            onClick={
-                                () => {
-                                    document.getElementById(idConfirm).style.display = "none";
-                                    document.getElementById(idCancel).style.display = "none";
-                                    document.getElementById(idUnlock).style.display = "inline";
-                                }
-                        }>
-                            <Text>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={hiddenButtonTags}
-                            id={idConfirm}
-                            onClick={
-                                () => {
-                                    this.props.onConfirm(_id);
-                                }
-                        }><Text>Confirm</Text></TouchableOpacity>
-                    </View>
+                    <Image source = {flags[this.props.item.sprite]}/>
+                    <Image source = {portraits[this.props.item.sprite]}/>
+                    <Image style={{height: 100, width: 100, opacity:lockOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/lock.png')}/>
+                    <Image style={{height: 100, width: 100, opacity:checkmarkOpacity, position: 'absolute', top:70, left:30}} source = {require('../assets/img/emojis/checkmark.png')}/>
                 </View>
-            )
+            );
         }
-        return (
-            <View style={skinContainer}>
-                <View>
-                    <Image source={portraits[sprite]}/>
-                    <Image source={flags[sprite]}/>
-
-                </View>
-                <View>
-                    <Text>{name}
-                        - {price}
-                        coins
-                    </Text>
-                    <TouchableOpacity style={buttonTags}
-                        id={idUnlock}
-                        onClick={
-                            () => { // this.props.onToggle(_id);
-                                document.getElementById(idConfirm).style.display = "inline";
-                                document.getElementById(idCancel).style.display = "inline";
-                                document.getElementById(idUnlock).style.display = "none";
-                            }
-                    }>
-                        <Text>Unlock</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={hiddenButtonTags}
-                        id={idCancel}
-                        onClick={
-                            () => {
-                                document.getElementById(idConfirm).style.display = "none";
-                                document.getElementById(idCancel).style.display = "none";
-                                document.getElementById(idUnlock).style.display = "inline";
-                            }
-                    }>
-                        <Text>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={hiddenButtonTags}
-                        id={idConfirm}
-                        onClick={
-                            () => {
-                                this.props.onConfirm(_id, price);
-                            }
-                    }><Text>Confirm</Text></TouchableOpacity>
-                </View>
-            </View>
-        )
-    }
 }
+
+
 
 
 function preload(){
@@ -732,6 +549,25 @@ function preload(){
     portraits[39]=require('../assets/img/portraits/39.png');
 
     portraits[40]=require('../assets/img/portraits/40.png');
+    portraits[41]=require('../assets/img/portraits/41.png');
+    portraits[42]=require('../assets/img/portraits/42.png');
+    portraits[43]=require('../assets/img/portraits/43.png');
+    portraits[44]=require('../assets/img/portraits/44.png');
+    portraits[45]=require('../assets/img/portraits/45.png');
+    portraits[46]=require('../assets/img/portraits/46.png');
+    portraits[47]=require('../assets/img/portraits/47.png');
+    portraits[48]=require('../assets/img/portraits/48.png');
+    portraits[49]=require('../assets/img/portraits/49.png');
+
+    portraits[50]=require('../assets/img/portraits/50.png');
+    portraits[51]=require('../assets/img/portraits/51.png');
+    portraits[52]=require('../assets/img/portraits/52.png');
+    portraits[53]=require('../assets/img/portraits/53.png');
+    portraits[54]=require('../assets/img/portraits/54.png');
+    portraits[55]=require('../assets/img/portraits/55.png');
+    portraits[56]=require('../assets/img/portraits/56.png');
+    portraits[57]=require('../assets/img/portraits/57.png');
+    portraits[58]=require('../assets/img/portraits/58.png');
 
 
     
@@ -780,6 +616,26 @@ function preload(){
     flags[39]=require('../assets/img/flags/39.png');
 
     flags[40]=require('../assets/img/flags/40.png');
+    flags[41]=require('../assets/img/flags/41.png');
+    flags[42]=require('../assets/img/flags/42.png');
+    flags[43]=require('../assets/img/flags/43.png');
+    flags[44]=require('../assets/img/flags/44.png');
+    flags[45]=require('../assets/img/flags/45.png');
+    flags[46]=require('../assets/img/flags/46.png');
+    flags[47]=require('../assets/img/flags/47.png');
+    flags[48]=require('../assets/img/flags/48.png');
+    flags[49]=require('../assets/img/flags/49.png');
+
+    flags[50]=require('../assets/img/flags/50.png');
+    flags[51]=require('../assets/img/flags/51.png');
+    flags[52]=require('../assets/img/flags/52.png');
+    flags[53]=require('../assets/img/flags/53.png');
+    flags[54]=require('../assets/img/flags/54.png');
+    flags[55]=require('../assets/img/flags/55.png');
+    flags[56]=require('../assets/img/flags/56.png');
+    flags[57]=require('../assets/img/flags/57.png');
+    flags[58]=require('../assets/img/flags/58.png');
+    // flags[59]=require('../assets/img/flags/59.png');
     
 }
 

@@ -106,15 +106,13 @@ goalkeepers[1] = {
     }
 };
 
-let goalDirection = [];
-goalDirection[0] = {
+let goalDirection = {
     position: {
         x: 0,
         y: 0
     }
 };
-let ballDirection = [];
-ballDirection[1] = {
+let ballDirection = {
     position: {
         x: 0,
         y: 0
@@ -213,7 +211,9 @@ async function loadTextureSafely(assetModule){
 
 
 async function changeScreenOrientation() {
-    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
+    if(Platform.OS=='android'||Platform.OS=='ios'){
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT);
+    }
 }
 
 class ThreeJSGameScreen extends React.Component {
@@ -242,7 +242,38 @@ class ThreeJSGameScreen extends React.Component {
         reactAppHolder = this;
     }
 
-    componentWillUnmount(){ //
+    componentWillUnmount(){ 
+        while(scene.children.length > 0){ 
+            scene.remove(scene.children[0]); 
+        }
+        goalkeepers = [];
+        goalkeepers[0] = {
+            position: {
+                x: 0,
+                y: 0
+            }
+        };
+        goalkeepers[1] = {
+            position: {
+                x: 0,
+                y: 0
+            }
+        };
+        ballDirection= {
+            position: {
+                x: 0,
+                y: 0
+            }
+        };
+        goalDirection = {
+            position: {
+                x: 0,
+                y: 0
+            }
+        };
+        ballSprite = null;
+        users = [];
+        usersExpanded = [];
         clearTimeout(timeout);
         if(socket)
             socket.disconnect();
@@ -356,12 +387,12 @@ function checkGoal(){
             score: score,
         });
         
-        if(ball.x<0){
+        if(ball.x<0-10){
             reactAppHolder.setState({
                 goalScoredText: 'GOAL RED!'
             });
         }
-        if(ball.x > global.gameWidth){
+        if(ball.x > global.gameWidth+10){
             reactAppHolder.setState({
                 goalScoredText: 'GOAL BLUE!'
             });
@@ -1008,7 +1039,7 @@ function drawBall(ball) {
     ballImg.offset.x = Math.floor(ball.frame / 10)/10;
 
     if (ballSprite) {
-        ballSprite.position.set(ball.x, - ball.y,10);
+        ballSprite.position.set(ball.x, - ball.y,20);
     } else if (ballImg) {
         ballMaterial = new SpriteMaterial({
             map: ballImg,
@@ -1210,7 +1241,7 @@ function movePlayers() {
             }
         }
         if (currentExpanded && currentExpanded.characterSprite && currentExpanded.characterCircle) {
-            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 100, 10);
+            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 50, 10);
             currentExpanded.characterCircle.position.set(users[i].x, - users[i].y, 10);
             let index = currentExpanded.emoji;
             if(index===0||(index&&index!=-1)){
@@ -1387,6 +1418,25 @@ async function JUSTloadMyShitUp() {
         characters[39] = require('../assets/img/39.png');
 
         characters[40] = require('../assets/img/40.png');
+        characters[41] = require('../assets/img/41.png');
+        characters[42] = require('../assets/img/42.png');
+        characters[43] = require('../assets/img/43.png');
+        characters[44] = require('../assets/img/44.png');
+        characters[45]=require('../assets/img/45.png');
+        characters[46]=require('../assets/img/46.png');
+        characters[47]=require('../assets/img/47.png');
+        characters[48]=require('../assets/img/48.png');
+        characters[49]=require('../assets/img/49.png');
+    
+        characters[50]=require('../assets/img/50.png');
+        characters[51]=require('../assets/img/51.png');
+        characters[52]=require('../assets/img/52.png');
+        characters[53]=require('../assets/img/53.png');
+        characters[54]=require('../assets/img/54.png');
+        characters[55]=require('../assets/img/55.png');
+        characters[56]=require('../assets/img/56.png');
+        characters[57]=require('../assets/img/57.png');
+        characters[58]=require('../assets/img/58.png');
 
         goalDirection.img = await loadTextureSafely(require('../assets/img/emojis/goal.png'));
         ballDirection.img = await loadTextureSafely(require('../assets/img/emojis/ball.png'));

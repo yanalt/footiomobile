@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, AsyncStorage, Button,TouchableOpacity, FlatList} from 'react-native';
+import {StyleSheet, Text, View, AsyncStorage, Button,TouchableOpacity, FlatList,StatusBar} from 'react-native';
 import {hostConfig} from '../config';
 import axios from 'axios';
 import AdBar from '../components/AdBar';
@@ -153,6 +153,8 @@ class RoomsScreen extends Component {
         }
         return (
             <View style={styles.container}>
+
+                <StatusBar hidden />
                 <View style={styles.subContainer}>
                     <Text style={styles.title}>QUICK GAME</Text>
 
@@ -182,7 +184,7 @@ class RoomsScreen extends Component {
                                 RoomsScreenHolder.handleQuickRoom('hard')
                         }}
                             style={styles.button}>
-                            <Text style={styles.bigButtonText}>HARD 💀</Text>
+                            <Text style={styles.bigButtonText}>HARD 👽</Text>
                         </TouchableOpacity>
                     </View>
                     

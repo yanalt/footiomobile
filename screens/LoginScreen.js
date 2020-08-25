@@ -39,11 +39,9 @@ _retrieveData = async(str) => {
     }
 };
 
-omegalul = function () {
-    console.log("OMEGALUL");
-}
 
-handleNewUser = function (email, token) {
+
+let handleNewUser = function (email, token) {
     console.log('handleNewUser');
     axios({
         method: 'post',
@@ -67,7 +65,7 @@ handleNewUser = function (email, token) {
     });
 }
 
-handleReturningUser = function (email, token) {
+let handleReturningUser = function (email, token) {
     console.log('handleReturningUser');
     console.log(hostConfig.address);
     axios({
@@ -143,7 +141,6 @@ class LoginScreen extends Component {
                             if (result.additionalUserInfo.isNewUser) {
                                 console.log("New user");
                                 handleNewUser(googleUser.user.email, googleUser.idToken);
-                                omegalul();
                             } else {
                                 console.log("Returning user");
                                 handleReturningUser(googleUser.user.email, googleUser.idToken);

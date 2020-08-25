@@ -1,16 +1,13 @@
 import * as ScreenOrientation from 'expo-screen-orientation';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Platform } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
-import GameScreen from './screens/GameScreen';
 import GuestScreen from './screens/GuestScreen';
 import GetCoinsScreen from './screens/GetCoinsScreen';
-import ShopScreen from './screens/ShopScreen';
 import NativeShopScreen from './screens/NativeShopScreen';
-import NativeGameScreen from './screens/NativeGameScreen';
 import ThreeJSGameScreen from './screens/ThreeJSGameScreen';
 import ReloadScreen from './screens/ReloadScreen';
 import RoomsScreen from './screens/RoomsScreen';
@@ -30,7 +27,9 @@ async function changeScreenOrientation() {
 export default class App extends React.Component {
 
   componentDidMount() {
-    changeScreenOrientation();
+    if(Platform.OS=='android'||Platform.OS=='ios'){
+      changeScreenOrientation();
+    }
 }
   render(){
     return <AppNavigator />;
@@ -42,11 +41,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   LoadingScreen: LoadingScreen,
   LoginScreen: LoginScreen,
   DashboardScreen: DashboardScreen,
-  NativeGameScreen: NativeGameScreen,
-  GameScreen: GameScreen,
   GuestScreen: GuestScreen,
   GetCoinsScreen: GetCoinsScreen,
-  ShopScreen: ShopScreen,
   NativeShopScreen:NativeShopScreen,
   ThreeJSGameScreen: ThreeJSGameScreen,
   ReloadScreen: ReloadScreen,
