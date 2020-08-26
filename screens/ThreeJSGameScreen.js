@@ -43,7 +43,11 @@ let grassTexture;
 let goalNet;
 let socket;
 let startKick = 0;
-let comArr = [];
+let commercials = [];
+let commercialPlanesTop = [];
+let commercialPlanesBottom = [];
+let commercialPlanesLeft = [];
+let commercialPlanesRight = [];
 let comIndex = 0;
 let celebration = false;
 let ballSprite,
@@ -69,6 +73,7 @@ let global = {
     disconnected: false,
     kicked: false,
     camera: null,
+    commercialCount: 8,
     goalkeeperRadius: 40
 }
 
@@ -592,6 +597,43 @@ async function handleContextCreate(gl) {
 
         } else {
             console.log('grass failed to load');
+        }
+
+        if(commercials && commercials.length){
+            
+            for (let i = 0; i < 6; i++) {
+                commercialPlanesTop[i] = new THREE.Mesh( new THREE.PlaneGeometry( 600*0.6, 160*0.6),
+                                                new THREE.MeshBasicMaterial( {map: commercials[i]} ) );
+                commercialPlanesTop[i].position.set(600/2*0.6 + i*global.gameWidth/6, 160/2*0.6, 5);
+                scene.add( commercialPlanesTop[i] );
+
+                commercialPlanesBottom[i] = new THREE.Mesh( new THREE.PlaneGeometry( 600*0.6, 160*0.6),
+                                                new THREE.MeshBasicMaterial( {map: commercials[i]} ) );
+                commercialPlanesBottom[i].position.set(600/2*0.6 + i*global.gameWidth/6, 0 - global.gameHeight - 160/2*0.6, 5);
+                scene.add( commercialPlanesBottom[i] );
+            }
+
+            for (let i = 0; i < 2; i++) {
+                commercialPlanesLeft[i] = new THREE.Mesh( new THREE.PlaneGeometry( 600*0.6, 160*0.6),
+                                                new THREE.MeshBasicMaterial( {map: commercials[i]} ) );
+                commercialPlanesLeft[i].rotateZ(Math.PI/2)
+                commercialPlanesLeft[i].position.set(0 - 160*0.6/2, (0 - 600*0.6/2)*((i+1)%2) - (global.gameHeight - 600*0.6/2)*((i)%2), 5);
+                scene.add( commercialPlanesLeft[i] );
+
+                commercialPlanesRight[i] = new THREE.Mesh( new THREE.PlaneGeometry( 600*0.6, 160*0.6),
+                                                new THREE.MeshBasicMaterial( {map: commercials[i]} ) );
+                commercialPlanesRight[i].rotateZ(-Math.PI/2);
+                commercialPlanesRight[i].position.set(global.gameWidth + 160*0.6/2, (0 - 600*0.6/2)*((i+1)%2) - (global.gameHeight - 600*0.6/2)*((i)%2), 5);
+                scene.add( commercialPlanesRight[i] );
+
+            }
+
+            // let commercialGeometry = new THREE.PlaneGeometry( 600*0.6, 160*0.6);
+            // let commercialMaterial = new THREE.MeshBasicMaterial( {map: commercials[0]} );
+            // let commercialPlane = new THREE.Mesh( commercialGeometry, commercialMaterial );
+            
+            // commercialPlane.position.set(600/2*0.6, 160/2*0.6, 5);
+            // scene.add( commercialPlane );
         }
 
         let circleGeo = new CircleGeometry(100, 32);
@@ -1302,30 +1344,20 @@ function drawgoals() {
 
 
 
-// function drawCommercials(index) {
-//     var comDiv = 8;
-//     var comHeight = 70;
-//     for (var i = 0; i < comDiv; i++) {
-//         var x = global.screenWidth / 2 - player.x + i * global.gameWidth / comDiv;
-//         var y = global.screenHeight / 2 - player.y - comHeight;
-//         // graph.drawImage(comArr[index + i % 2], x, y, global.gameWidth / comDiv,
-//         // comHeight);
-//     }
 
-//     for (let i = 0; i < comDiv; i++) {
-//         var a = global.screenWidth / 2 - player.x + i * global.gameWidth / comDiv;
-//         var b = global.gameHeight + global.screenHeight / 2 - player.y;
-//         // graph.drawImage(comArr[index + i % 2], a, b, global.gameWidth / comDiv,
-//         // comHeight);
-//     }
-// }
 
 
 
 // function comIndexNext() { // rolls commercial signs
-//     comIndex += 2;
+//     comIndex += 1;
 //     comIndex = comIndex % global.commercialCount;
+
+//     for (let i = 0; i < commercialPlanesBottom.length; i++) {
+//         // console.log('lol');        
+//     }
 // }
+
+// setInterval(comIndexNext,5*1000);
 
 async function JUSTloadMyShitUp() {
     startGame();
@@ -1335,17 +1367,16 @@ async function JUSTloadMyShitUp() {
 
         grassTexture = await loadTextureSafely(require('../assets/img/grass.jpeg'));
 
-        // let src = Asset.fromModule(require('../assets/img/grass.jpeg'));
-        // if(src){
-        //     await loadTextureAsync({asset:src}).then((res)=>{
-        //             socket.emit('err',src);
-        //             grassTexture=res;
-                
-        //     }).catch((e)=>{
-        //         console.log('fgt'+e);
-        //     });
-        // }
+        commercials[0] = await loadTextureSafely(require('../assets/img/commercials/0.png'));
+        commercials[1] = await loadTextureSafely(require('../assets/img/commercials/1.png'));
+        commercials[2] = await loadTextureSafely(require('../assets/img/commercials/2.png'));
+        commercials[3] = await loadTextureSafely(require('../assets/img/commercials/3.png'));
+        commercials[4] = await loadTextureSafely(require('../assets/img/commercials/4.png'));
+        commercials[5] = await loadTextureSafely(require('../assets/img/commercials/5.png'));
+        commercials[6] = await loadTextureSafely(require('../assets/img/commercials/6.png'));
+        commercials[7] = await loadTextureSafely(require('../assets/img/commercials/7.png'));
 
+    
         goalNet = await loadTextureSafely(require('../assets/img/net.png'));
         emojis[0] = await loadTextureSafely(require('../assets/img/emojis/grin.png'));
         emojis[1] = await loadTextureSafely(require('../assets/img/emojis/angry.png'));
@@ -1353,25 +1384,7 @@ async function JUSTloadMyShitUp() {
         emojis[3] = await loadTextureSafely(require('../assets/img/emojis/tongue.png'));
         emojis[4] = await loadTextureSafely(require('../assets/img/emojis/wave.png'));
         
-        // await loadAsync(require('../assets/img/net.png')).then((res) => {
-        //     goalNet = res;
-        // });
-
-        // await loadAsync(require('../assets/img/emojis/grin.png')).then((res) => {
-        //     emojis[0] = res;
-        // });
-        // await loadAsync(require('../assets/img/emojis/angry.png')).then((res) => {
-        //     emojis[1] = res;
-        // });
-        // await loadAsync(require('../assets/img/emojis/poo.png')).then((res) => {
-        //     emojis[2] = res;
-        // });
-        // await loadAsync(require('../assets/img/emojis/tongue.png')).then((res) => {
-        //     emojis[3] = res;
-        // });
-        // await loadAsync(require('../assets/img/emojis/wave.png')).then((res) => {
-        //     emojis[4] = res;
-        // });
+       
 
         characters[0] = require('../assets/img/0.png');
         characters[1] = require('../assets/img/1.png');
@@ -1445,24 +1458,7 @@ async function JUSTloadMyShitUp() {
         ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
         ballImg.repeat.set( 1 / 10, 1 );
 
-        // await loadAsync(require('../assets/img/emojis/goal.png')).then((res) => {
-        //     goalDirection.img = res;
-        // });
-
-        // await loadAsync(require('../assets/img/emojis/ball.png')).then((res) => {
-        //     ballDirection.img = res;
-        // });
-
-        // await loadAsync(require('../assets/img/goalkeeper.png')).then((res) => {
-        //     goalkeepers[0].img = res;
-        // });
-
-        // await loadAsync(require('../assets/img/ball_0.png')).then((res) => {
-        //     ballImg = res;
-        //     ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
-        //     ballImg.repeat.set( 1 / 10, 1 );
-        // });
-
+   
 
 
 
