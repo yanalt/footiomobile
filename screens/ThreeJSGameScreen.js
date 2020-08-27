@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system';
 
 import {View,
     Dimensions,Text,Platform,
-    AsyncStorage,Image,I18nManager,StatusBar} from 'react-native';
+    AsyncStorage,Image,StatusBar} from 'react-native';
 import io from 'socket.io-client';
 import {
     Mesh,
@@ -26,7 +26,6 @@ import {
     BufferGeometry,
     Line,
 } from 'three';
-I18nManager.allowRTL(false);
 
 
 console.disableYellowBox = true;
@@ -653,6 +652,8 @@ async function handleContextCreate(gl) {
                 global.startPingTime = Date.now();
                 socket.emit('pingcheck');
             }
+            if(frames==0)
+                comIndexNext();
 
             movePlayers();
             drawGoalkeepers(goalkeepers);
@@ -905,7 +906,7 @@ async function setupSocket(socket) { // Handle ping.
     socket.on('pongcheck', function () {
         var latency = Date.now() - global.startPingTime;
         // debug('Latency: ' + latency + 'ms');
-        console.log('Latency: ' + latency + 'ms');
+        // console.log('Latency: ' + latency + 'ms');
     });
 
     // Handle error.
@@ -1230,7 +1231,7 @@ function handleEmoji(index){
 
 function drawBallDirection() {
     try {
-        if (player.x >= ball.x - 10 && player.x <= ball.x + 10 && player.y >= ball.y - 10 && player.y <= ball.y + 10) {
+        if (player.x >= ball.x - 28 && player.x <= ball.x + 28 && player.y >= ball.y - 28 && player.y <= ball.y + 28) {
             ballDirection.sprite.position.set(0, 0, -10);
         } else {
             let distance = Math.sqrt(Math.pow(ball.x - player.x, 2) + Math.pow(ball.y - player.y, 2)); // only towards left
@@ -1348,16 +1349,30 @@ function drawgoals() {
 
 
 
-// function comIndexNext() { // rolls commercial signs
-//     comIndex += 1;
-//     comIndex = comIndex % global.commercialCount;
+function comIndexNext() { // rolls commercial signs
+    comIndex += 1;
+    comIndex = comIndex % global.commercialCount;
 
-//     for (let i = 0; i < commercialPlanesBottom.length; i++) {
-//         // console.log('lol');        
-//     }
-// }
+    // let tmp = commercialPlanesTop[0].material.map;
+    for (let i = 0; i < commercialPlanesTop.length; i++) {
+        try{
+            commercialPlanesTop[i].material.map=commercials[(comIndex + i)%global.commercialCount];
+            commercialPlanesBottom[i].material.map=commercials[(comIndex + i)%global.commercialCount];
+        }catch(e){
+            console.log(e);
+        }
+    }
+    for (let i = 0; i < commercialPlanesLeft.length; i++) {
+        try{
+            commercialPlanesLeft[i].material.map=commercials[(comIndex + i)%global.commercialCount];
+            commercialPlanesRight[i].material.map=commercials[(comIndex + i)%global.commercialCount];
+        }catch(e){
+            console.log(e);
+        }
+    }
+    // commercialPlanesTop[commercialPlanesTop.length-1].material.map = tmp;
+}
 
-// setInterval(comIndexNext,5*1000);
 
 async function JUSTloadMyShitUp() {
     startGame();

@@ -1,6 +1,6 @@
 import * as ScreenOrientation from 'expo-screen-orientation';
 import React from 'react';
-import { StyleSheet,Platform } from 'react-native';
+import { StyleSheet,Platform,I18nManager } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -17,6 +17,8 @@ import CreditsScreen from './screens/CreditsScreen';
 
 import * as firebase from 'firebase';
 import { firebaseConfig } from './config';
+I18nManager.forceRTL(false);
+I18nManager.allowRTL(false);
 firebase.initializeApp(firebaseConfig);
 
 
