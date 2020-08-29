@@ -5,6 +5,8 @@ import {Asset} from 'expo-asset';
 import * as React from 'react';
 import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
+import {AdMobBanner, AdMobInterstitial} from 'expo-ads-admob';
+import {hostConfig,adMobConfig} from '../config';
 // import AdBar from '../components/AdBar';
 
 import {View,
@@ -150,7 +152,15 @@ let target = {
 };
 
 
-_retrieveData = async(str) => {
+async function _storeData(str, val) {
+    try {
+        await AsyncStorage.setItem(str, val);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+async function _retrieveData(str) {
     try {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
@@ -284,6 +294,10 @@ class ThreeJSGameScreen extends React.Component {
     }
 
     componentDidMount(){
+        if (Platform.OS == 'android' || Platform.OS == 'ios') {
+            AdMobInterstitial.setTestDeviceID([AdMobInterstitial.simulatorId]);
+            AdMobInterstitial.setAdUnitID(adMobConfig.AdMobInterstitialID);
+        }
         loadCSS(Dimensions.get('window').width,Dimensions.get('window').height);
     }
 
@@ -392,14 +406,38 @@ function checkGoal(){
         });
         
         if(ball.x<0-10){
-            reactAppHolder.setState({
-                goalScoredText: 'GOAL RED!'
-            });
+            if(score.red>=5){
+                reactAppHolder.setState({
+                    goalScoredText: 'RED WINS!'
+                });
+                if(!showingInterstitial){
+                    showInterstitial();
+                    showingInterstitial = true;
+                }
+            }else{
+                if(score.red>0){
+                    reactAppHolder.setState({
+                        goalScoredText: 'GOAL RED!'
+                    });
+                }
+            }
         }
         if(ball.x > global.gameWidth+10){
-            reactAppHolder.setState({
-                goalScoredText: 'GOAL BLUE!'
-            });
+            if(score.blue>=5){
+                reactAppHolder.setState({
+                    goalScoredText: 'BLUE WINS!'
+                });
+                if(!showingInterstitial){
+                    showInterstitial();
+                    showingInterstitial = true;
+                }
+            }else{
+                if(score.blue>0){
+                    reactAppHolder.setState({
+                        goalScoredText: 'GOAL BLUE!'
+                    });
+                }
+            }
         }
 
     } else {
@@ -414,7 +452,7 @@ function checkGoal(){
 
 
 function handleSprint(){
-    instructions++;
+    // instructions++;
     socket.emit('sprint');
 }
 
@@ -901,157 +939,166 @@ function startGame() {
     socket.emit('respawn');
 }
 
-async function setupSocket(socket) { // Handle ping.
-    let conf = await _retrieveData('skinToken');
-    socket.on('pongcheck', function () {
-        var latency = Date.now() - global.startPingTime;
-        // debug('Latency: ' + latency + 'ms');
-        // console.log('Latency: ' + latency + 'ms');
-    });
+async function setupSocket(socket) { 
+    try
+    {
+        let conf = await _retrieveData('skinToken');
+        // Handle ping.
+        socket.on('pongcheck', function () {
+            var latency = Date.now() - global.startPingTime;
+            // debug('Latency: ' + latency + 'ms');
+            // console.log('Latency: ' + latency + 'ms');
+        });
 
-    // Handle error.
-    socket.on('connect_failed', function () {
-        socket.close();
-        global.disconnected = true;
-    });
+        // Handle error.
+        socket.on('connect_failed', function () {
+            socket.close();
+            global.disconnected = true;
+        });
 
-    socket.on('disconnect', function () {
-        socket.close();
-        global.disconnected = true;
-        reactAppHolder.handleExit();
-    });
+        socket.on('error', function (e) {
+            console.log(e);
+        });
 
-    // Handle connection.
-    socket.on('welcome', function (playerSettings) {
-        console.log(playerSettings.team);
-        player = playerSettings;
-        player.name = global.playerName;
-        player.screenWidth = global.screenWidth;
-        player.screenHeight = global.screenHeight;
-        player.target = target;
-        player.conf = conf;
-        player.name = 'lol';
+        socket.on('disconnect', function () {
+            socket.close();
+            global.disconnected = true;
+            reactAppHolder.handleExit();
+        });
 
-        global.player = player;
-        socket.emit('gotit', player);
-        global.gameStart = true;
-    });
+        // Handle connection.
+        socket.on('welcome', function (playerSettings) {
+            console.log(playerSettings.team);
+            player = playerSettings;
+            player.name = global.playerName;
+            player.screenWidth = global.screenWidth;
+            player.screenHeight = global.screenHeight;
+            player.target = target;
+            player.conf = conf;
+            player.name = 'lol';
 
-    socket.on('gameSetup', function (data) {
-        global.gameWidth = data.gameWidth;
-        global.gameHeight = data.gameHeight;
-        global.goalWidth = data.goalWidth;
-        global.goalkeeperRadius = data.goalkeeperRadius;
-    });
+            global.player = player;
+            socket.emit('gotit', player);
+            global.gameStart = true;
+        });
 
-    // Handle movement.
-    socket.on('3', function (userData, serverBall, serverGoalkeepers) {
-        let playerData;
-        for (let i = 0; i < userData.length; i++) {
-            instructions++;
-            if (typeof(userData[i].id) == "undefined") {
-                playerData = userData[i];
-                i = userData.length;
-            }
-        }
-        player.xoffset = player.x - playerData.x;
-        player.yoffset = player.y - playerData.y;
+        socket.on('gameSetup', function (data) {
+            global.gameWidth = data.gameWidth;
+            global.gameHeight = data.gameHeight;
+            global.goalWidth = data.goalWidth;
+            global.goalkeeperRadius = data.goalkeeperRadius;
+        });
 
-        player.x = playerData.x;
-        player.y = playerData.y;
-        player.xoffset = isNaN(player.xoffset) ? 0 : player.xoffset;
-        player.yoffset = isNaN(player.yoffset) ? 0 : player.yoffset;
-
-        users = userData;
-
-
-        ball = serverBall;
-        goalkeepers[0].position = serverGoalkeepers[0].position;
-        goalkeepers[1].position = serverGoalkeepers[1].position;
-    });
-
-    // slower socket for non-movement information
-
-    socket.on('4', function (serverScore, serverUsers) {
-
-        if (serverScore) {
-            if(score.blue==0&&score.red==0)
-                reactAppHolder.setState({
-                    score:serverScore
-                });
-            score = serverScore;
-        }
-        
-        
-        serverUsers.forEach((u) => {
-            for (let i = 0; i < usersExpanded.length; i++) {
+        // Handle movement.
+        socket.on('3', function (userData, serverBall, serverGoalkeepers) {
+            let playerData;
+            for (let i = 0; i < userData.length; i++) {
                 instructions++;
-                if (usersExpanded[i].id == u.id) {
-                    usersExpanded[i].emoji=u.emoji;
-                    if(usersExpanded[i].team != u.team){
-                        usersExpanded[i].team = u.team;
-                        usersExpanded[i].characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
-                    }
-                    
-                    return;
+                if (typeof(userData[i].id) == "undefined") {
+                    playerData = userData[i];
+                    i = userData.length;
                 }
             }
-            loadCharacterSprites(u).then((res) => {
-                usersExpanded.push(res);
-            });
-        });
-        for (let i = 0; i < usersExpanded.length; i++) {
-            instructions+=serverUsers.length;
-            let found = serverUsers.find(u => u.id==usersExpanded[i].id);
-            if(found == undefined){
-                console.log('spliced 1');
-                scene.remove(usersExpanded[i].characterCircle);
-                scene.remove(usersExpanded[i].characterSprite);
-                usersExpanded.splice(i, 1);
-                break;
-            }
-        }
-    });
+            player.xoffset = player.x - playerData.x;
+            player.yoffset = player.y - playerData.y;
 
-    socket.on('playerDisconnect', function (data) {
-        for (let i = 0; i < usersExpanded.length; i++) {
-            instructions++;
-            if (usersExpanded[i].id == data.id){ 
-                console.log('spliced 2');
-                scene.remove(usersExpanded[i].characterCircle);
-                scene.remove(usersExpanded[i].characterSprite);
-                usersExpanded.splice(i, 1);
+            player.x = playerData.x;
+            player.y = playerData.y;
+            player.xoffset = isNaN(player.xoffset) ? 0 : player.xoffset;
+            player.yoffset = isNaN(player.yoffset) ? 0 : player.yoffset;
+
+            users = userData;
+
+
+            ball = serverBall;
+            goalkeepers[0].position = serverGoalkeepers[0].position;
+            goalkeepers[1].position = serverGoalkeepers[1].position;
+        });
+
+        // slower socket for non-movement information
+
+        socket.on('4', function (serverScore, serverUsers) {
+
+            if (serverScore) {
+                if(score.blue==0&&score.red==0)
+                    reactAppHolder.setState({
+                        score:serverScore
+                    });
+                score = serverScore;
             }
             
-        }
-    });
-    
-    socket.on('kick', function (data) {
-        global.gameStart = false;
-        global.kicked = true;
-        socket.close();
-    });
-
-    socket.on('kickBall', function () {
-        let randomIndex = Math.floor(Math.random() * 3);
-        if(soundCount<5){
-            try{
-                soundCount++;
-                kickSounds[randomIndex].setPositionAsync(0);
-                kickSounds[randomIndex].setVolumeAsync(0.1);
-                kickSounds[randomIndex].playAsync();
+            
+            serverUsers.forEach((u) => {
+                for (let i = 0; i < usersExpanded.length; i++) {
+                    instructions++;
+                    if (usersExpanded[i].id == u.id) {
+                        usersExpanded[i].emoji=u.emoji;
+                        if(usersExpanded[i].team != u.team){
+                            usersExpanded[i].team = u.team;
+                            usersExpanded[i].characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
+                        }
+                        
+                        return;
+                    }
+                }
+                loadCharacterSprites(u).then((res) => {
+                    usersExpanded.push(res);
+                });
+            });
+            for (let i = 0; i < usersExpanded.length; i++) {
+                instructions+=serverUsers.length;
+                let found = serverUsers.find(u => u.id==usersExpanded[i].id);
+                if(found == undefined){
+                    console.log('spliced 1');
+                    scene.remove(usersExpanded[i].characterCircle);
+                    scene.remove(usersExpanded[i].characterSprite);
+                    usersExpanded.splice(i, 1);
+                    break;
+                }
             }
-            catch(e){
-                console.log('err'+e);
+        });
+
+        socket.on('playerDisconnect', function (data) {
+            for (let i = 0; i < usersExpanded.length; i++) {
+                instructions++;
+                if (usersExpanded[i].id == data.id){ 
+                    console.log('spliced 2');
+                    scene.remove(usersExpanded[i].characterCircle);
+                    scene.remove(usersExpanded[i].characterSprite);
+                    usersExpanded.splice(i, 1);
+                }
+                
             }
-        }
-    });
+        });
+        
+        socket.on('kick', function (data) {
+            global.gameStart = false;
+            global.kicked = true;
+            socket.close();
+        });
 
-    // socket.on('goal', function (data) {     var soundId = "goal" +
-    // (Math.floor(Math.random() * (4 - 1)) + 1);    
-    // document     .getElementById(soundId)     .volume =     // 0.2; document
-    // .getElementById(soundId)     .play(); });
+        socket.on('kickBall', function () {
+            let randomIndex = Math.floor(Math.random() * 3);
+            if(soundCount<5){
+                try{
+                    soundCount++;
+                    kickSounds[randomIndex].setPositionAsync(0);
+                    kickSounds[randomIndex].setVolumeAsync(0.1);
+                    kickSounds[randomIndex].playAsync();
+                }
+                catch(e){
+                    console.log('err'+e);
+                }
+            }
+        });
 
+        // socket.on('goal', function (data) {     var soundId = "goal" +
+        // (Math.floor(Math.random() * (4 - 1)) + 1);    
+        // document     .getElementById(soundId)     .volume =     // 0.2; document
+        // .getElementById(soundId)     .play(); });
+    }catch(e){
+        console.log(e);
+    }
 }
 
 function drawCircle(centerX, centerY, radius, sides, name, color, filled) {
@@ -1343,8 +1390,26 @@ function drawgoals() {
     scene.add(goal2);
 }
 
-
-
+let showingInterstitial = false;
+async function showInterstitial() {
+    console.log('showInterstitial()');
+    if (Platform.OS == 'android' || Platform.OS == 'ios') {
+        AdMobInterstitial
+            .requestAdAsync()
+            .then(() => {
+                console.log('showing interstitial');
+                AdMobInterstitial.showAdAsync().then(()=>{
+                    showingInterstitial = false;
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                showingInterstitial = false;
+            });
+    }else{
+        console.log('web ad');
+    }
+}
 
 
 

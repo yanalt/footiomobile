@@ -22,7 +22,7 @@ const bannerWidths = [200, 250, 320];
 // style={styles.title}>{title}</Text>         <View>{children}</View> </View>
 // );
 
-_storeData = async(str, val) => {
+async function _storeData (str, val)  {
     try {
         await AsyncStorage.setItem(str, val);
     } catch (e) {
@@ -30,7 +30,7 @@ _storeData = async(str, val) => {
     }
 };
 
-_retrieveData = async(str) => {
+async function _retrieveData(str) {
     try {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {

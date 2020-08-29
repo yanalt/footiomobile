@@ -18,7 +18,7 @@ import AdBar from '../components/AdBar';
 console.disableYellowBox = true;
 console.warn = function() {};
 
-_storeData = async(str, val) => {
+async function _storeData (str, val) {
     try {
         await AsyncStorage.setItem(str, val);
     } catch (e) {
@@ -26,7 +26,7 @@ _storeData = async(str, val) => {
     }
 };
 
-_retrieveData = async(str) => {
+async function _retrieveData (str) {
     try {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
@@ -99,6 +99,13 @@ class LoginScreen extends Component {
         }
     }
 
+    handleCredits() {
+        this
+            .props
+            .navigation
+            .navigate('CreditsScreen');
+    }
+    
     componentDidMount(){
         this.setState({isLoaded:true});
     }
@@ -224,6 +231,17 @@ class LoginScreen extends Component {
                             <Text style={styles.buttonText}>PLAY AS A GUEST! ⚽</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={styles.buttonSpaceCredits}>
+                        <TouchableOpacity
+                            onPress={() => {this.handleCredits()
+                            }}
+                            style={styles.buttonCredits}>
+                            <Text
+                                style={{
+                                fontSize: 15
+                            }}>Credits</Text>
+                        </TouchableOpacity>
+                    </View>
                     <AdBar/>
                 
                 </View>
@@ -271,6 +289,17 @@ const styles = StyleSheet.create({
     buttonSpace: {
         width: '70%',
         padding: 5
+    },
+    buttonSpaceCredits:{
+        padding: 10,
+        position: 'absolute',
+        bottom: '30%',
+        right: 0
+    },
+    buttonCredits:{
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        padding: 10
     },
     title: {
         fontSize: 50

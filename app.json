@@ -3,7 +3,7 @@
     "packagerOpts": {
       "assetExts": ["jpeg","png","mp3","ttf"]
     },
-    "name": "MUNDmobile",
+    "name": "FOOTIO",
     "slug": "MUNDmobile",
     "privacy": "public",
     "sdkVersion": "37.0.0",

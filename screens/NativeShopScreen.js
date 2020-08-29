@@ -23,7 +23,7 @@ let ownedFilteredSkins = [];
 let filteredSkins = [];
 preload();
 
-_storeData = async (str, val) => {
+async function _storeData(str, val) {
     try {
         await AsyncStorage.setItem(str, val);
     } catch (e) {
@@ -31,12 +31,11 @@ _storeData = async (str, val) => {
     }
 };
 
-_retrieveData = async (str) => {
+async function _retrieveData(str) {
     try {
         const value = await AsyncStorage.getItem(str);
         if (value !== null) {
-            // We have data!!
-            // console.log(value);
+            // We have data!! console.log(value);
             return value;
         }
     } catch (e) {
