@@ -12,9 +12,9 @@
         "address": "https://footio.com.de"
     },
     "adMobConfig":{
-        "AdBarID": "ca-app-pub-2084501738226097/2969526779",
-        "AdMobRewardedID": "ca-app-pub-2084501738226097/7370385339",
-        "AdMobInterstitialID" : "ca-app-pub-2084501738226097/4994965405",
+        "AdBarID": "ca-app-pub-3940256099942544/2934735716",
+        "AdMobRewardedID": "ca-app-pub-3940256099942544/5224354917",
+        "AdMobInterstitialID" : "ca-app-pub-3940256099942544/1033173712",
 
         "TestAdBarID": "ca-app-pub-3940256099942544/2934735716",
         "TestAdMobRewardedID": "ca-app-pub-3940256099942544/5224354917",

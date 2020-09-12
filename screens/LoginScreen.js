@@ -170,8 +170,7 @@ class LoginScreen extends Component {
                     behavior: 'web', 
                     androidClientId: '759889128579-jhgdv8nbg9ri1ocn19ja0d07dhlfep9p.apps.googleusercontent.com',
                     androidStandaloneAppClientId: '759889128579-uaqe04e8e7d6bhtfeca56a6n26u0ctor.apps.googleusercontent.com',
-                    // iosClientId:
-                    // '759889128579-ir3o6i9ei8bi95vrq0g7q2ct29klf9qm.apps.googleusercontent.com',
+                    iosClientId: '759889128579-ir3o6i9ei8bi95vrq0g7q2ct29klf9qm.apps.googleusercontent.com',
                     scopes: ['profile', 'email']
                 });
 

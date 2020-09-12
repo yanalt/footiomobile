@@ -28,7 +28,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "fuckyou"
+      "bundleIdentifier": "footio"
     },
     "android": {
       "package": "com.timsa7.mundmobile",

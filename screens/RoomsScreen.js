@@ -60,6 +60,7 @@ class RoomsScreen extends Component {
         _retrieveData('x-auth').then((val) => {
             //   console.log(val);
             xauth = val;
+            if(xauth){
             axios({
                 method: 'post',
                 headers: {
@@ -68,7 +69,7 @@ class RoomsScreen extends Component {
                 url: hostConfig.address +'/users/skintoken'
               }).then(response=>{
                 _storeData('skinToken',response.headers.skin);
-              });
+              });}
         }).catch((e) => {
             console.log(e);
         });
