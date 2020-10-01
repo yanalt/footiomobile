@@ -153,6 +153,7 @@ class GetCoinsScreen extends Component {
                 <TouchableOpacity style={styles.button} onPress={this.showRewarded}>
                     <Text style={styles.buttonText}>
                         👉 Click here and get coins after watching an ad! 👈
+                        (only twice every 5 minutes)
                     </Text>
                 </TouchableOpacity>
 

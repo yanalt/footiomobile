@@ -102,6 +102,13 @@ class CreditsScreen extends Component {
                     </Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity onPress={()=>{this.loadInBrowser(2)}}>
+                    <Text >
+                        Some of the design is the derived from the free to use models created by @Quaternius. Make sure to look him up on socials.
+                        Thanks to @Quaternius!
+                    </Text>
+                </TouchableOpacity>
+
 
 
                 <View

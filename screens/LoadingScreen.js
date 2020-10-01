@@ -13,6 +13,14 @@ import axios from 'axios';
 import firebase from 'firebase';
 import {hostConfig} from '../config';
 
+async function _storeData(str, val) {
+    try {
+        await AsyncStorage.setItem(str, val);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 class LoadingScreen extends Component {
 
     componentDidMount() {

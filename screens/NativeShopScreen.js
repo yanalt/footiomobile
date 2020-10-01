@@ -567,6 +567,103 @@ function preload(){
     portraits[56]=require('../assets/img/portraits/56.png');
     portraits[57]=require('../assets/img/portraits/57.png');
     portraits[58]=require('../assets/img/portraits/58.png');
+    portraits[59]=require('../assets/img/portraits/59.png');
+
+    portraits[60]=require('../assets/img/portraits/60.png');
+    portraits[61]=require('../assets/img/portraits/61.png');
+    portraits[62]=require('../assets/img/portraits/62.png');
+    portraits[63]=require('../assets/img/portraits/63.png');
+    portraits[64]=require('../assets/img/portraits/64.png');
+    portraits[65]=require('../assets/img/portraits/65.png');
+    portraits[66]=require('../assets/img/portraits/66.png');
+    portraits[67]=require('../assets/img/portraits/67.png');
+    portraits[68]=require('../assets/img/portraits/68.png');
+    portraits[69]=require('../assets/img/portraits/69.png');
+
+    portraits[70]=require('../assets/img/portraits/70.png');
+    portraits[71]=require('../assets/img/portraits/71.png');
+    portraits[72]=require('../assets/img/portraits/72.png');
+    portraits[73]=require('../assets/img/portraits/73.png');
+    portraits[74]=require('../assets/img/portraits/74.png');
+    portraits[75]=require('../assets/img/portraits/75.png');
+    portraits[76]=require('../assets/img/portraits/76.png');
+    portraits[77]=require('../assets/img/portraits/77.png');
+    portraits[78]=require('../assets/img/portraits/78.png');
+    portraits[79]=require('../assets/img/portraits/79.png');
+
+    portraits[80]=require('../assets/img/portraits/80.png');
+    portraits[81]=require('../assets/img/portraits/81.png');
+    portraits[82]=require('../assets/img/portraits/82.png');
+    portraits[83]=require('../assets/img/portraits/83.png');
+    portraits[84]=require('../assets/img/portraits/84.png');
+    portraits[85]=require('../assets/img/portraits/85.png');
+    portraits[86]=require('../assets/img/portraits/86.png');
+    portraits[87]=require('../assets/img/portraits/87.png');
+    portraits[88]=require('../assets/img/portraits/88.png');
+    portraits[89]=require('../assets/img/portraits/89.png');
+
+    portraits[90]=require('../assets/img/portraits/90.png');
+    portraits[91]=require('../assets/img/portraits/91.png');
+    portraits[92]=require('../assets/img/portraits/92.png');
+    portraits[93]=require('../assets/img/portraits/93.png');
+    portraits[94]=require('../assets/img/portraits/94.png');
+    portraits[95]=require('../assets/img/portraits/95.png');
+    portraits[96]=require('../assets/img/portraits/96.png');
+    portraits[97]=require('../assets/img/portraits/97.png');
+    portraits[98]=require('../assets/img/portraits/98.png');
+    portraits[99]=require('../assets/img/portraits/99.png');
+
+    portraits[100]=require('../assets/img/portraits/100.png');
+    portraits[101]=require('../assets/img/portraits/101.png');
+    portraits[102]=require('../assets/img/portraits/102.png');
+    portraits[103]=require('../assets/img/portraits/103.png');
+    portraits[104]=require('../assets/img/portraits/104.png');
+    portraits[105]=require('../assets/img/portraits/105.png');
+    portraits[106]=require('../assets/img/portraits/106.png');
+    portraits[107]=require('../assets/img/portraits/107.png');
+    portraits[108]=require('../assets/img/portraits/108.png');
+    portraits[109]=require('../assets/img/portraits/109.png');
+
+    portraits[110]=require('../assets/img/portraits/110.png');
+    portraits[111]=require('../assets/img/portraits/111.png');
+    portraits[112]=require('../assets/img/portraits/112.png');
+    portraits[113]=require('../assets/img/portraits/113.png');
+    portraits[114]=require('../assets/img/portraits/114.png');
+    portraits[115]=require('../assets/img/portraits/115.png');
+    portraits[116]=require('../assets/img/portraits/116.png');
+    portraits[117]=require('../assets/img/portraits/117.png');
+    portraits[118]=require('../assets/img/portraits/118.png');
+    portraits[119]=require('../assets/img/portraits/119.png');
+
+    portraits[120]=require('../assets/img/portraits/120.png');
+    portraits[121]=require('../assets/img/portraits/121.png');
+    portraits[122]=require('../assets/img/portraits/122.png');
+    portraits[123]=require('../assets/img/portraits/123.png');
+    portraits[124]=require('../assets/img/portraits/124.png');
+    portraits[125]=require('../assets/img/portraits/125.png');
+    portraits[126]=require('../assets/img/portraits/126.png');
+    portraits[127]=require('../assets/img/portraits/127.png');
+    portraits[128]=require('../assets/img/portraits/128.png');
+    portraits[129]=require('../assets/img/portraits/129.png');
+
+    portraits[130]=require('../assets/img/portraits/130.png');
+    portraits[131]=require('../assets/img/portraits/131.png');
+    portraits[132]=require('../assets/img/portraits/132.png');
+    portraits[133]=require('../assets/img/portraits/133.png');
+    portraits[134]=require('../assets/img/portraits/134.png');
+    portraits[135]=require('../assets/img/portraits/135.png');
+    portraits[136]=require('../assets/img/portraits/136.png');
+    portraits[137]=require('../assets/img/portraits/137.png');
+
+
+
+
+
+
+
+
+
+
 
 
     
@@ -634,7 +731,94 @@ function preload(){
     flags[56]=require('../assets/img/flags/56.png');
     flags[57]=require('../assets/img/flags/57.png');
     flags[58]=require('../assets/img/flags/58.png');
-    // flags[59]=require('../assets/img/flags/59.png');
+    flags[59]=require('../assets/img/flags/59.png');
+
+    flags[60]=require('../assets/img/flags/60.png');
+    flags[61]=require('../assets/img/flags/61.png');
+    flags[62]=require('../assets/img/flags/62.png');
+    flags[63]=require('../assets/img/flags/63.png');
+    flags[64]=require('../assets/img/flags/64.png');
+    flags[65]=require('../assets/img/flags/65.png');
+    flags[66]=require('../assets/img/flags/66.png');
+    flags[67]=require('../assets/img/flags/67.png');
+    flags[68]=require('../assets/img/flags/68.png');
+    flags[69]=require('../assets/img/flags/69.png');
+
+    flags[70]=require('../assets/img/flags/70.png');
+    flags[71]=require('../assets/img/flags/71.png');
+    flags[72]=require('../assets/img/flags/72.png');
+    flags[73]=require('../assets/img/flags/73.png');
+    flags[74]=require('../assets/img/flags/74.png');
+    flags[75]=require('../assets/img/flags/75.png');
+    flags[76]=require('../assets/img/flags/76.png');
+    flags[77]=require('../assets/img/flags/77.png');
+    flags[78]=require('../assets/img/flags/78.png');
+    flags[79]=require('../assets/img/flags/79.png');
+
+    flags[80]=require('../assets/img/flags/80.png');
+    flags[81]=require('../assets/img/flags/81.png');
+    flags[82]=require('../assets/img/flags/82.png');
+    flags[83]=require('../assets/img/flags/83.png');
+    flags[84]=require('../assets/img/flags/84.png');
+    flags[85]=require('../assets/img/flags/85.png');
+    flags[86]=require('../assets/img/flags/86.png');
+    flags[87]=require('../assets/img/flags/87.png');
+    flags[88]=require('../assets/img/flags/88.png');
+    flags[89]=require('../assets/img/flags/89.png');
+
+    flags[90]=require('../assets/img/flags/90.png');
+    flags[91]=require('../assets/img/flags/91.png');
+    flags[92]=require('../assets/img/flags/92.png');
+    flags[93]=require('../assets/img/flags/93.png');
+    flags[94]=require('../assets/img/flags/94.png');
+    flags[95]=require('../assets/img/flags/95.png');
+    flags[96]=require('../assets/img/flags/96.png');
+    flags[97]=require('../assets/img/flags/97.png');
+    flags[98]=require('../assets/img/flags/98.png');
+    flags[99]=require('../assets/img/flags/99.png');
+
+
+    flags[100]=require('../assets/img/flags/100.png');
+    flags[101]=require('../assets/img/flags/101.png');
+    flags[102]=require('../assets/img/flags/102.png');
+    flags[103]=require('../assets/img/flags/103.png');
+    flags[104]=require('../assets/img/flags/104.png');
+    flags[105]=require('../assets/img/flags/105.png');
+    flags[106]=require('../assets/img/flags/106.png');
+    flags[107]=require('../assets/img/flags/107.png');
+    flags[108]=require('../assets/img/flags/108.png');
+    flags[109]=require('../assets/img/flags/109.png');
+
+    flags[110]=require('../assets/img/flags/110.png');
+    flags[111]=require('../assets/img/flags/111.png');
+    flags[112]=require('../assets/img/flags/112.png');
+    flags[113]=require('../assets/img/flags/113.png');
+    flags[114]=require('../assets/img/flags/114.png');
+    flags[115]=require('../assets/img/flags/115.png');
+    flags[116]=require('../assets/img/flags/116.png');
+    flags[117]=require('../assets/img/flags/117.png');
+    flags[118]=require('../assets/img/flags/118.png');
+    flags[119]=require('../assets/img/flags/119.png');
+
+    flags[120]=require('../assets/img/flags/120.png');
+    flags[121]=require('../assets/img/flags/121.png');
+    flags[122]=require('../assets/img/flags/122.png');
+    flags[123]=require('../assets/img/flags/123.png');
+    flags[124]=require('../assets/img/flags/124.png');
+    flags[125]=require('../assets/img/flags/125.png');
+    flags[126]=require('../assets/img/flags/126.png');
+    flags[127]=require('../assets/img/flags/127.png');
+    flags[128]=require('../assets/img/flags/128.png');
+    flags[129]=require('../assets/img/flags/129.png');
+
+    flags[130]=require('../assets/img/flags/130.png');
+    flags[131]=require('../assets/img/flags/131.png');
+    flags[132]=require('../assets/img/flags/132.png');
+    flags[133]=require('../assets/img/flags/133.png');
+    flags[134]=require('../assets/img/flags/134.png');
+    flags[135]=require('../assets/img/flags/135.png');
+    flags[136]=require('../assets/img/flags/136.png');
+    flags[137]=require('../assets/img/flags/137.png');
     
 }
 

@@ -52,7 +52,8 @@ let commercialPlanesRight = [];
 let comIndex = 0;
 let celebration = false;
 let ballSprite,
-    ballMaterial;
+    ballMaterial,
+    ballCircle;
 let kickSounds = [];
 let netSounds = [];
 let soundCount = 0;
@@ -1129,7 +1130,12 @@ function drawBall(ball) {
     ballImg.offset.x = Math.floor(ball.frame / 10)/10;
 
     if (ballSprite) {
-        ballSprite.position.set(ball.x, - ball.y,20);
+        if(-ball.y>-player.y+5&&ball.x<player.x+9&&ball.x>player.x-9)
+            ballSprite.position.set(ball.x, - ball.y,-20);
+        else
+            ballSprite.position.set(ball.x, - ball.y,20);
+
+        ballCircle.position.set(ball.x, - ball.y,18);
     } else if (ballImg) {
         ballMaterial = new SpriteMaterial({
             map: ballImg,
@@ -1138,6 +1144,7 @@ function drawBall(ball) {
         ballSprite = new Sprite(ballMaterial); // ballSprite.scale.set(50,50,1);
         ballSprite.position.set(global.gameWidth / 2, - global.gameHeight / 2, 3);
         ballSprite.scale.set(18, 18, 1);
+        ballCircle = drawCircle(global.gameWidth / 2, - global.gameHeight / 2, 9, 10, 'ball',0xAAAAAA,true);
         scene.add(ballSprite);
     }
 }
@@ -1530,6 +1537,96 @@ async function JUSTloadMyShitUp() {
         characters[56]=require('../assets/img/56.png');
         characters[57]=require('../assets/img/57.png');
         characters[58]=require('../assets/img/58.png');
+        characters[59]=require('../assets/img/59.png');
+
+
+        characters[60] = require('../assets/img/60.png');
+        characters[61] = require('../assets/img/61.png');
+        characters[62] = require('../assets/img/62.png');
+        characters[63] = require('../assets/img/63.png');
+        characters[64] = require('../assets/img/64.png');
+        characters[65] = require('../assets/img/65.png');
+        characters[66] = require('../assets/img/66.png');
+        characters[67] = require('../assets/img/67.png');
+        characters[68] = require('../assets/img/68.png');
+        characters[69] = require('../assets/img/69.png');
+
+        characters[70] = require('../assets/img/70.png');
+        characters[71] = require('../assets/img/71.png');
+        characters[72] = require('../assets/img/72.png');
+        characters[73] = require('../assets/img/73.png');
+        characters[74] = require('../assets/img/74.png');
+        characters[75] = require('../assets/img/75.png');
+        characters[76] = require('../assets/img/76.png');
+        characters[77] = require('../assets/img/77.png');
+        characters[78] = require('../assets/img/78.png');
+        characters[79] = require('../assets/img/79.png');
+
+        characters[80] = require('../assets/img/80.png');
+        characters[81] = require('../assets/img/81.png');
+        characters[82] = require('../assets/img/82.png');
+        characters[83] = require('../assets/img/83.png');
+        characters[84] = require('../assets/img/84.png');
+        characters[85] = require('../assets/img/85.png');
+        characters[86] = require('../assets/img/86.png');
+        characters[87] = require('../assets/img/87.png');
+        characters[88] = require('../assets/img/88.png');
+        characters[89] = require('../assets/img/89.png');
+
+        characters[90] = require('../assets/img/90.png');
+        characters[91] = require('../assets/img/91.png');
+        characters[92] = require('../assets/img/92.png');
+        characters[93] = require('../assets/img/93.png');
+        characters[94] = require('../assets/img/94.png');
+        characters[95] = require('../assets/img/95.png');
+        characters[96] = require('../assets/img/96.png');
+        characters[97] = require('../assets/img/97.png');
+        characters[98] = require('../assets/img/98.png');
+        characters[99] = require('../assets/img/99.png');
+
+
+        characters[100]=require('../assets/img/100.png');
+        characters[101]=require('../assets/img/101.png');
+        characters[102]=require('../assets/img/102.png');
+        characters[103]=require('../assets/img/103.png');
+        characters[104]=require('../assets/img/104.png');
+        characters[105]=require('../assets/img/105.png');
+        characters[106]=require('../assets/img/106.png');
+        characters[107]=require('../assets/img/107.png');
+        characters[108]=require('../assets/img/108.png');
+        characters[109]=require('../assets/img/109.png');
+    
+        characters[110]=require('../assets/img/110.png');
+        characters[111]=require('../assets/img/111.png');
+        characters[112]=require('../assets/img/112.png');
+        characters[113]=require('../assets/img/113.png');
+        characters[114]=require('../assets/img/114.png');
+        characters[115]=require('../assets/img/115.png');
+        characters[116]=require('../assets/img/116.png');
+        characters[117]=require('../assets/img/117.png');
+        characters[118]=require('../assets/img/118.png');
+        characters[119]=require('../assets/img/119.png');
+    
+        characters[120]=require('../assets/img/120.png');
+        characters[121]=require('../assets/img/121.png');
+        characters[122]=require('../assets/img/122.png');
+        characters[123]=require('../assets/img/123.png');
+        characters[124]=require('../assets/img/124.png');
+        characters[125]=require('../assets/img/125.png');
+        characters[126]=require('../assets/img/126.png');
+        characters[127]=require('../assets/img/127.png');
+        characters[128]=require('../assets/img/128.png');
+        characters[129]=require('../assets/img/129.png');
+    
+        characters[130]=require('../assets/img/130.png');
+        characters[131]=require('../assets/img/131.png');
+        characters[132]=require('../assets/img/132.png');
+        characters[133]=require('../assets/img/133.png');
+        characters[134]=require('../assets/img/134.png');
+        characters[135]=require('../assets/img/135.png');
+        characters[136]=require('../assets/img/136.png');
+        characters[137]=require('../assets/img/137.png');
+
 
         goalDirection.img = await loadTextureSafely(require('../assets/img/emojis/goal.png'));
         ballDirection.img = await loadTextureSafely(require('../assets/img/emojis/ball.png'));
