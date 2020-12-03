@@ -6,7 +6,7 @@ import {adMobConfig} from '../config';
 export default function AdBar(props) {
     let style = {
         position: 'absolute',
-        right: 0,
+        left: 30,
         width: '100%'
     }
     if (props.top) 

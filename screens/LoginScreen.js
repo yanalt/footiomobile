@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     Text,
     View,
-    AsyncStorage
+    AsyncStorage,
+    Platform
 } from 'react-native';
 import * as Expo from 'expo';
 import firebase from 'firebase';
@@ -14,6 +15,8 @@ import axios from 'axios';
 import {hostConfig} from '../config';
 import * as Google from 'expo-google-app-auth';
 import AdBar from '../components/AdBar';
+import * as Crypto from "expo-crypto";
+import * as AppleAuthentication from "expo-apple-authentication";
 
 console.disableYellowBox = true;
 console.warn = function() {};
@@ -38,6 +41,7 @@ async function _retrieveData (str) {
         console.log(e);
     }
 };
+
 
 
 
@@ -89,6 +93,51 @@ let handleReturningUser = function (email, token) {
         // console.log(propName,propValue); }
     });
 }
+
+
+// WARNING: IOS =======================================================
+
+const loginWithApple = async () => {
+    const csrf = Math.random().toString(36).substring(2, 15);
+    const nonce = Math.random().toString(36).substring(2, 10);
+    const hashedNonce = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256, nonce);
+    const appleCredential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL
+      ],
+      state: csrf,
+      nonce: hashedNonce
+    });
+    const { identityToken, email, state } = appleCredential;
+  }  // This should go in state
+  const loginAvailable = AppleAuthentication.isAvailableAsync();  
+  
+    // if(loginAvailable === true)
+    // {
+    //   return (  
+    //         <View style={{ alignItems: "center" }}>
+    //             <AppleAuthentication.AppleAuthenticationButton
+    //             buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+    //             buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+    //             cornerRadius={5}
+    //             style={{ width: 250, height: 50 }}
+    //             onPress={loginWithApple}      />
+    //         </View>
+    //         )
+    // }
+    // else{
+    //     return (
+    //         <View>
+    //             <Text>Loading...</Text>
+    //         </View>
+    //     )
+    // }
+
+
+// WARNING: IOS ========================================================
+
 
 class LoginScreen extends Component {
 
@@ -221,6 +270,13 @@ class LoginScreen extends Component {
                             style={styles.button}>
                             <Text style={styles.buttonText}>SIGN IN WITH GOOGLE</Text>
                         </TouchableOpacity>
+                            <Text style={styles.buttonText}>SIGN IN WITH APPLE</Text>
+                            <AppleAuthentication.AppleAuthenticationButton
+                            buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+                            cornerRadius={5}
+                            style={{ width: 250, height: 50 }}
+                            onPress={loginWithApple}      />
                     </View>
 
                     <View style={styles.buttonSpace}>
@@ -257,18 +313,34 @@ class LoginScreen extends Component {
 //
 export default LoginScreen;
 
+let displayAndroid = 'flex',displayIos = 'flex';
+if(Platform.OS=='android'){
+    displayIos = 'flex';
+}
+if(Platform.OS=='ios'){
+    displayAndroid='none';
+}
+
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         marginTop: 70,
         marginBottom: 0,
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        justifyContent: 'center'
     },
     
     button: {
         alignItems: "center",
         backgroundColor: "#DDDDDD",
+        display:displayAndroid,
+        padding: 10
+    },
+    buttonApple: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        display:displayIos,
         padding: 10
     },
     buttonSignOut: {

@@ -176,8 +176,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingTop:20,
-        backgroundColor: '#fff'
+        paddingTop:0,
+        backgroundColor: '#fff',
+        justifyContent: 'center'
     },
     button: {
         alignItems: "center",

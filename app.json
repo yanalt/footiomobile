@@ -1,18 +1,16 @@
 {
   "expo": {
     "packagerOpts": {
-      "assetExts": ["jpeg","png","mp3","ttf"]
     },
     "name": "FOOTIO",
     "slug": "MUNDmobile",
     "privacy": "public",
-    "sdkVersion": "37.0.0",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "landscape",
     "icon": "./assets/img/icon.png",
     "splash": {
@@ -24,15 +22,20 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*", "assets/audio/*", "assets/img/*", "assets/image/*"
+      "**/*",
+      "assets/audio/*",
+      "assets/img/*",
+      "assets/image/*"
     ],
     "ios": {
       "supportsTablet": true,
+      "usesAppleSignIn" : true,
       "bundleIdentifier": "footio"
     },
     "android": {
       "package": "com.timsa7.mundmobile",
-      "versionCode": 1,
+      "versionCode": 3,
+      "permissions": [],
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-3940256099942544~3347511713"
       }
