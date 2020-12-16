@@ -10,13 +10,14 @@ import {
     Platform
 } from 'react-native';
 import * as Expo from 'expo';
-import firebase from 'firebase';
 import axios from 'axios';
 import {hostConfig} from '../config';
-import * as Google from 'expo-google-app-auth';
 import AdBar from '../components/AdBar';
-import * as Crypto from "expo-crypto";
-import * as AppleAuthentication from "expo-apple-authentication";
+import ShortUniqueId from 'short-unique-id';
+
+let uidDictionary = ['a','b','c','d','e','f','g','h','i','j','k','m','n','p','q','r','s','t','u','v','w','x','y','z','2','3','4','5','6','7','8','9'];
+const uid = new ShortUniqueId({ dictionary: uidDictionary , length: 6 });
+const upass = new ShortUniqueId({ dictionary: uidDictionary , length: 8 });
 
 console.disableYellowBox = true;
 console.warn = function() {};
@@ -45,14 +46,16 @@ async function _retrieveData (str) {
 
 
 
-let handleNewUser = function (email, token) {
+let handleNewUser = function () {
     console.log('handleNewUser');
+    let email = uid();
+    let password = upass();
     axios({
         method: 'post',
-        url: hostConfig.address + '/users/androidsignup', //???????????????????????????????????
+        url: hostConfig.address + '/users/', 
         data: {
             email,
-            refreshToken: token
+            password
         }
     }).then((res) => {
         console.log(res.headers['x-auth']);
@@ -62,6 +65,8 @@ let handleNewUser = function (email, token) {
                 .navigation
                 .navigate('DashboardScreen');
         });
+        _storeData('email', email).then(() => {});
+        _storeData('password', password).then(() => {});
     }).catch((e) => {
         console.log(e);
         // for(var propName in e) {     let propValue = e[propName];
@@ -69,8 +74,10 @@ let handleNewUser = function (email, token) {
     });
 }
 
-let handleReturningUser = function (email, token) {
-    console.log('handleReturningUser');
+
+
+let handleLoggedInUser = function (email, token) {
+    console.log('handleLoggedInUser');
     console.log(hostConfig.address);
     axios({
         method: 'post',
@@ -94,49 +101,9 @@ let handleReturningUser = function (email, token) {
     });
 }
 
-
-// WARNING: IOS =======================================================
-
-const loginWithApple = async () => {
-    const csrf = Math.random().toString(36).substring(2, 15);
-    const nonce = Math.random().toString(36).substring(2, 10);
-    const hashedNonce = await Crypto.digestStringAsync(
-      Crypto.CryptoDigestAlgorithm.SHA256, nonce);
-    const appleCredential = await AppleAuthentication.signInAsync({
-      requestedScopes: [
-        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-        AppleAuthentication.AppleAuthenticationScope.EMAIL
-      ],
-      state: csrf,
-      nonce: hashedNonce
-    });
-    const { identityToken, email, state } = appleCredential;
-  }  // This should go in state
-  const loginAvailable = AppleAuthentication.isAvailableAsync();  
-  
-    // if(loginAvailable === true)
-    // {
-    //   return (  
-    //         <View style={{ alignItems: "center" }}>
-    //             <AppleAuthentication.AppleAuthenticationButton
-    //             buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-    //             buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-    //             cornerRadius={5}
-    //             style={{ width: 250, height: 50 }}
-    //             onPress={loginWithApple}      />
-    //         </View>
-    //         )
-    // }
-    // else{
-    //     return (
-    //         <View>
-    //             <Text>Loading...</Text>
-    //         </View>
-    //     )
-    // }
-
-
-// WARNING: IOS ========================================================
+let handleReturningUser = function () {
+    
+}
 
 
 class LoginScreen extends Component {
@@ -159,83 +126,11 @@ class LoginScreen extends Component {
         this.setState({isLoaded:true});
     }
 
-    isUserEqual = (googleUser, firebaseUser) => {
-        console.log("isUserEqual");
-        if (firebaseUser) {
-            var providerData = firebaseUser.providerData;
-            for (var i = 0; i < providerData.length; i++) {
-                if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID && providerData[i].uid === googleUser.getBasicProfile().getId()) {
-                    // We don't need to reauth the Firebase connection.
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
 
-    onSignIn = (googleUser) => {
-        console.log("onSignIn");
-        // console.log('Google Auth Response', googleUser); We need to register an
-        // Observer on Firebase Auth to make sure auth is initialized.
-        var unsubscribe = firebase
-            .auth()
-            .onAuthStateChanged(function (firebaseUser) {
-                unsubscribe();
-                // Check if we are already signed-in Firebase with the correct user.
-                if (!this.isUserEqual(googleUser, firebaseUser)) {
-                    // Build Firebase credential with the Google ID token.
-                    var credential = firebase
-                        .auth
-                        .GoogleAuthProvider
-                        .credential(googleUser.idToken, googleUser.accessToken);
-                    // Sign in with credential from the Google user.
-                    firebase
-                        .auth()
-                        .signInWithCredential(credential)
-                        .then(function (result) {
-                            console.log('user signed in!');
-                            if (result.additionalUserInfo.isNewUser) {
-                                console.log("New user");
-                                handleNewUser(googleUser.user.email, googleUser.idToken);
-                            } else {
-                                console.log("Returning user");
-                                handleReturningUser(googleUser.user.email, googleUser.idToken);
-                            }
-                        })
-                        .catch(function (e) {
-                            console.log(e);
-                        });
-                } else {
-                    console.log('User already signed in with Firebase.');
-                }
-            }.bind(this));
-    }
+    
 
-    signInWithGoogleAsync = async() => {
-        try {
-            this.setState({isLoaded:false});
-            const result = await Google
-                .logInAsync({
-                    behavior: 'web', 
-                    androidClientId: '759889128579-jhgdv8nbg9ri1ocn19ja0d07dhlfep9p.apps.googleusercontent.com',
-                    androidStandaloneAppClientId: '759889128579-uaqe04e8e7d6bhtfeca56a6n26u0ctor.apps.googleusercontent.com',
-                    iosClientId: '759889128579-ir3o6i9ei8bi95vrq0g7q2ct29klf9qm.apps.googleusercontent.com',
-                    scopes: ['profile', 'email']
-                });
-
-            if (result.type === 'success') {
-                this.onSignIn(result);
-                return result.accessToken;
-            } else {
-                this.setState({isLoaded:true});
-                return {cancelled: true};
-            }
-        } catch (e) {
-            this.setState({isLoaded:true});
-            console.log(e);
-            return {error: true};
-        }
-    };
+    
 
     handleGuest = async() => {
         console.log("handleGuest");
@@ -268,22 +163,15 @@ class LoginScreen extends Component {
                         <TouchableOpacity
                             onPress={() => this.signInWithGoogleAsync()}
                             style={styles.button}>
-                            <Text style={styles.buttonText}>SIGN IN WITH GOOGLE</Text>
+                            <Text style={styles.buttonText}>I AM NEW!</Text>
                         </TouchableOpacity>
-                            <Text style={styles.buttonText}>SIGN IN WITH APPLE</Text>
-                            <AppleAuthentication.AppleAuthenticationButton
-                            buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-                            cornerRadius={5}
-                            style={{ width: 250, height: 50 }}
-                            onPress={loginWithApple}      />
                     </View>
 
                     <View style={styles.buttonSpace}>
                         <TouchableOpacity
                             onPress={() => this.handleGuest()}
                             style={styles.button}>
-                            <Text style={styles.buttonText}>PLAY AS A GUEST! ⚽</Text>
+                            <Text style={styles.buttonText}>I HAVE CODE!</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.buttonSpaceCredits}>
