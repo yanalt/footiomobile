@@ -10,13 +10,8 @@ import {
     TextInput
 } from 'react-native';
 import axios from 'axios';
-import firebase from 'firebase';
 import AdBar from '../components/AdBar';
 
-{/* <Text>{firebase.auth().currentUser.email}</Text>
-<Text>{firebase.auth().currentUser.displayName}</Text> //a
-<Text>{firebase.auth().currentUser.refreshToken}</Text> */
-}
 
 async function _storeData(str, val) {
     try {
@@ -138,11 +133,7 @@ class DashboardScreen extends Component {
                 <View style={styles.buttonSpaceSignOut}>
                     <TouchableOpacity
                         onPress={() => {
-                            _storeData('x-auth', '').then(() => {
-                                firebase.auth().signOut()
-                            }).catch((e)=>{
-                                console.log(e);
-                            });
+                            _storeData('x-auth', '');
                         }}
                         style={styles.buttonSignOut}>
                         <Text

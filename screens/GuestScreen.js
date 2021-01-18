@@ -7,7 +7,6 @@ import {
     Button,
     StatusBar
 } from 'react-native';
-import WebView from 'react-native-webview';
 
 // import {MonoText} from '../components/StyledText';
 import {hostConfig} from '../config';
@@ -60,10 +59,6 @@ class GuestScreen extends Component {
         return (
             <View style={styles.container}>
             <StatusBar hidden/>
-                <WebView
-                    source={{
-                    uri: hostConfig.address + '/#/rooms'
-                }}/>
                 <View style={{position:'absolute', bottom:'30%', right:0}}>
                     <Button title="Exit!"
                         style={{}}

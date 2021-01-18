@@ -7,17 +7,12 @@ import {
     Text,
     View,
     AsyncStorage,
+    TextInput,
     Platform
 } from 'react-native';
-import * as Expo from 'expo';
 import axios from 'axios';
 import {hostConfig} from '../config';
 import AdBar from '../components/AdBar';
-import ShortUniqueId from 'short-unique-id';
-
-let uidDictionary = ['a','b','c','d','e','f','g','h','i','j','k','m','n','p','q','r','s','t','u','v','w','x','y','z','2','3','4','5','6','7','8','9'];
-const uid = new ShortUniqueId({ dictionary: uidDictionary , length: 6 });
-const upass = new ShortUniqueId({ dictionary: uidDictionary , length: 8 });
 
 console.disableYellowBox = true;
 console.warn = function() {};
@@ -46,8 +41,60 @@ async function _retrieveData (str) {
 
 
 
+let handleNewUser = async function () {
+    console.log('handleNewUser');
+    let email = uid();
+    let password = upass();
+    axios({
+        method: 'post',
+        url: hostConfig.address + '/users/', 
+        data: {
+            email,
+            password
+        }
+    }).then((res) => {
+        console.log(res.headers['x-auth']);
+        _storeData('x-auth', res.headers['x-auth']).then(() => {
+            await _storeData('email', email);
+            await _storeData('password', password);
+            this
+                .props
+                .navigation
+                .navigate('DashboardScreen');
+        });
+    }).catch((e) => {
+        console.log(e);
+        // for(var propName in e) {     let propValue = e[propName];
+        // console.log(propName,propValue); }
+    });
+}
 
 
+
+let handleReturningUser = function (email, password) { //move to new screen
+    console.log('handleLoggedInUser');
+    console.log(hostConfig.address);
+    axios({
+        method: 'post',
+        url: hostConfig.address + '/users/login',
+        data: {
+            email,
+            password
+        }
+    }).then((res) => {
+        console.log(res.headers['x-auth']);
+        _storeData('x-auth', res.headers['x-auth']).then(() => {
+            this
+                .props
+                .navigation
+                .navigate('DashboardScreen');
+        });
+    }).catch((e) => {
+        console.log(e);
+        // for(var propName in e) {     let propValue = e[propName];
+        // console.log(propName,propValue); }
+    });
+}
 
 
 
@@ -57,91 +104,29 @@ class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoaded : false
+            isLoaded : false,
+            email: '',
+            password: ''
         }
     }
 
        
     componentDidMount(){
-        _retrieveData('x-auth').then((val)=>{
-            if(val!=null&&val!=undefined&&val.length>10){
-                this.props.navigation.navigate('DashboardScreen');
-            }else{
-                this.setState({isLoaded:true});
-            }
-        }).catch((e)=>{
-            console.log(e);
-            this.setState({isLoaded:true});
-        });
+        this.setState({isLoaded:true});
     }
 
     
-    async handleNewUser() {
-        try{
-        console.log('handleNewUser');
-        let email = uid();
-        let password = upass();
 
-        console.log(email+' '+password);
-        
-        let res = await axios({
-            method: 'post',
-            url: hostConfig.address + '/users/', //network error solution: add http:// before the address in config......
-            data: {
-                email: email,
-                password: password
-            }
-        });
-
-        console.log(res.headers['x-auth']);
-        await _storeData('x-auth', res.headers['x-auth'])
-        await _storeData('email', email);
-        await _storeData('password', password);
-        this
-            .props
-            .navigation
-            .navigate('DashboardScreen');
-        }catch(e){
-            console.log(e);
+    onChangeText(email, password){
+        if(email!=null){
+            this.setState({email});
+        }
+        if(password!=null){
+            this.setState({password});
         }
     }
-    
-    
-    
-    handleReturningUser1(email, password) { //move to new screen
-        console.log('handleLoggedInUser');
-        console.log(hostConfig.address);
-        axios({
-            method: 'post',
-            url: hostConfig.address + '/users/login',
-            data: {
-                email,
-                password
-            }
-        }).then((res) => {
-            console.log(res.headers['x-auth']);
-            _storeData('x-auth', res.headers['x-auth']).then(() => {
-                this
-                    .props
-                    .navigation
-                    .navigate('DashboardScreen');
-            });
-        }).catch((e) => {
-            console.log(e);
-            // for(var propName in e) {     let propValue = e[propName];
-            // console.log(propName,propValue); }
-        });
-    }
-    
-    handleReturningUser() {
-        this
-            .props
-            .navigation
-            .navigate('ReturningScreen');
-    }
-    
 
-    
+    // TODO: make the submit button work
 
     
 
@@ -160,9 +145,15 @@ class LoginScreen extends Component {
                     
                     <View style={styles.buttonSpace}>
                         <TouchableOpacity
-                            onPress={() => this.handleNewUser()}
                             style={styles.button}>
-                            <Text style={styles.buttonText}>I AM NEW!</Text>
+                            <TextInput onChangeText={text => onChangeText(text,null)} value='Your old ID'/>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.buttonSpace}>
+                        <TouchableOpacity
+                            style={styles.button}>
+                            <TextInput onChangeText={text => onChangeText(null,text)} value='Your old code'/>
                         </TouchableOpacity>
                     </View>
 
@@ -170,7 +161,7 @@ class LoginScreen extends Component {
                         <TouchableOpacity
                             onPress={() => this.handleReturningUser()}
                             style={styles.button}>
-                            <Text style={styles.buttonText}>I HAVE OLD CODE!</Text>
+                            <Text style={styles.buttonText}>OK</Text>
                         </TouchableOpacity>
                     </View>
 

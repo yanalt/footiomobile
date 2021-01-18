@@ -10,12 +10,24 @@ import {
     Platform
 } from 'react-native';
 import axios from 'axios';
-import firebase from 'firebase';
 import {hostConfig} from '../config';
 
 async function _storeData(str, val) {
     try {
         await AsyncStorage.setItem(str, val);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+async function _retrieveData (str) {
+    try {
+        const value = await AsyncStorage.getItem(str);
+        if (value !== null) {
+            // We have data!!
+            // console.log(value);
+            return value;
+        }
     } catch (e) {
         console.log(e);
     }
@@ -35,59 +47,61 @@ class LoadingScreen extends Component {
                 .navigate('GuestScreen');
         }
     }
-    handleLoggedIn(user) {
-        let deez = this;
-        console.log("LoadingScreen.js handleLoggedIn()");
-        // console.log(user.email); console.log(user.idToken);
-        user
-            .getIdToken(/* forceRefresh */
-            true)
-            .then(function (idToken) {
+    // handleLoggedIn(user) { //used for google sign-in
+    //     let deez = this;
+    //     console.log("LoadingScreen.js handleLoggedIn()");
+    //     console.log(user.email); console.log(user.idToken);
+    //     user
+    //         .getIdToken(/* forceRefresh */
+    //         true)
+    //         .then(function (idToken) {
 
-                axios({
-                    method: 'post',
-                    url: hostConfig.address + '/users/androidlogin',
-                    data: {
-                        email: user.email,
-                        refreshToken: idToken
-                    }
-                })
-                .then((res) => {
-                    console.log(res.headers['x-auth']);
-                    _storeData('x-auth', res.headers['x-auth']).then(() => {
-                        deez
-                            .props
-                            .navigation
-                            .navigate('DashboardScreen');
-                    });
-                }).catch((e)=>{
-                    console.log(e);
-                })
-            })
-            .catch((e) => {
-                console.log("ROFL");
-                console.log(e);
-                console.log(e.stack);
-                // for(var propName in e) {     let propValue = e[propName] //a
-                // console.log(propName,propValue); }
-            });
-    }
-    checkIfLoggedIn = () => {
+    //             axios({
+    //                 method: 'post',
+    //                 url: hostConfig.address + '/users/androidlogin',
+    //                 data: {
+    //                     email: user.email,
+    //                     refreshToken: idToken
+    //                 }
+    //             })
+    //             .then((res) => {
+    //                 console.log(res.headers['x-auth']);
+    //                 _storeData('x-auth', res.headers['x-auth']).then(() => {
+    //                     deez
+    //                         .props
+    //                         .navigation
+    //                         .navigate('DashboardScreen');
+    //                 });
+    //             }).catch((e)=>{
+    //                 console.log(e);
+    //             })
+    //         })
+    //         .catch((e) => {
+    //             console.log("ROFL");
+    //             console.log(e);
+    //             console.log(e.stack);
+    //             // for(var propName in e) {     let propValue = e[propName] //a
+    //             // console.log(propName,propValue); }
+    //         });
+    // }
+    async checkIfLoggedIn() {
         console.log("LoadingScreen.js checkIfLoggedIn");
-        firebase
-            .auth()
-            .onAuthStateChanged(function (user) {
-                // console.log(user);                  // maybe just send mail and an auth from
-                // here and tackle everything else in mund-front? problem: no oauthIdToken
-                if (user) { // this is being activated as soon as there is a "sign up", we should do something about it
-                    this.handleLoggedIn(user);
-                } else {
-                    this
-                        .props
-                        .navigation
-                        .navigate('LoginScreen');
-                }
-            }.bind(this));
+        
+        let xAuthVal = await _retrieveData('x-auth');
+        if(xAuthVal==null||xAuthVal==undefined||xAuthVal.length<10){
+            this
+                .props
+                .navigation
+                .navigate('LoginScreen');
+        }else{
+            console.log('user is logged in!');
+
+            this
+                .props
+                .navigation
+                .navigate('DashboardScreen');
+        }
+
     }
 
     render() {

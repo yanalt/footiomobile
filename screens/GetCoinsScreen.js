@@ -13,10 +13,6 @@ import AdBar from '../components/AdBar';
 import {AdMobBanner, AdMobInterstitial, PublisherBanner, AdMobRewarded} from 'expo-ads-admob';
 console.disableYellowBox = true;
 
-{/* <Text>{firebase.auth().currentUser.email}</Text>
-<Text>{firebase.auth().currentUser.displayName}</Text> //a
-<Text>{firebase.auth().currentUser.refreshToken}</Text> */
-}
 
 const bannerWidths = [200, 250, 320];
 

@@ -15,11 +15,8 @@ import CreditsScreen from './screens/CreditsScreen';
 
 
 
-import * as firebase from 'firebase';
-import { firebaseConfig } from './config';
 I18nManager.forceRTL(false);
 I18nManager.allowRTL(false);
-firebase.initializeApp(firebaseConfig);
 
 
 async function changeScreenOrientation() {

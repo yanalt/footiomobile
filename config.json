@@ -1,15 +1,6 @@
 {
-    "firebaseConfig": {
-        "apiKey": "AIzaSyAYiNxQc5Ff1hDQwUcJj_cIftqP-TU9AVI",
-        "authDomain": "mundmobile-ec6a3.firebaseapp.com",
-        "databaseURL": "https://mundmobile-ec6a3.firebaseio.com",
-        "projectId": "mundmobile-ec6a3",
-        "storageBucket": "mundmobile-ec6a3.appspot.com",
-        "messagingSenderId": "759889128579",
-        "appId": "1:759889128579:web:d7962059b7fe6e93"
-    },
     "hostConfig":{
-        "address": "https://footio.com.de"
+        "address": "http://10.0.0.11:3000"
     },
     "adMobConfig":{
         
