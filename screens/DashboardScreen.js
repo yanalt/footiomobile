@@ -133,7 +133,10 @@ class DashboardScreen extends Component {
                 <View style={styles.buttonSpaceSignOut}>
                     <TouchableOpacity
                         onPress={() => {
-                            _storeData('x-auth', '');
+                            this
+                                .props
+                                .navigation
+                                .navigate('SignoutScreen');
                         }}
                         style={styles.buttonSignOut}>
                         <Text

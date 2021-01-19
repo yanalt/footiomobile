@@ -41,82 +41,89 @@ async function _retrieveData (str) {
 
 
 
+let timer = -2;
+let timerInterval = null;
 
 
-
-
-let handleReturningUser = function (email, password) { //move to new screen
-    console.log('handleLoggedInUser');
-    console.log(hostConfig.address);
-    axios({
-        method: 'post',
-        url: hostConfig.address + '/users/login',
-        data: {
-            email,
-            password
-        }
-    }).then((res) => {
-        console.log(res.headers['x-auth']);
-        _storeData('x-auth', res.headers['x-auth']).then(() => {
-            this
-                .props
-                .navigation
-                .navigate('DashboardScreen');
-        });
-    }).catch((e) => {
-        console.log(e);
-        // for(var propName in e) {     let propValue = e[propName];
-        // console.log(propName,propValue); }
-    });
-}
-
-
-
-
-class ReturningScreen extends Component {
+class SignoutScreen extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             isLoaded : false,
             email: '',
-            password: ''
+            password: '',
+            revealedID: 'Click to show your ID',
+            revealedCode: 'Click to show your code',
+            isIDrevealed: false,
+            isCoderevealed: false,
+            signOutTimer: '👈',
         }
     }
 
        
-    componentDidMount(){
-        this.setState({isLoaded:true});
+    async componentDidMount(){
+        let email = await _retrieveData('email');
+        let password = await _retrieveData('password');
+        this.setState({
+            isLoaded:true,
+            email,
+            password      
+        });
     }
 
-    handleLogin(){
-        try{
-            console.log('handleLogin');
-    
-            let res = await axios({
-                method: 'post',
-                url: hostConfig.address + '/users/androidlogin', //network error solution: add http:// before the address in config......
-                data: {
-                    email: email,
-                    password: password
-                }
+    revealID(){
+        if(timer<0&&this.state.email!=null&&this.state.email!=''){
+            this.setState({
+                revealedID: 'Your ID is: ' + this.state.email,
+                isIDrevealed: true,
             });
-    
-            console.log(res.headers['x-auth']);
-            await _storeData('x-auth', res.headers['x-auth'])
-            await _storeData('email', email);
-            await _storeData('password', password);
-            this
-                .props
-                .navigation
-                .navigate('DashboardScreen');
-            }catch(e){
-                console.log(e);
-            }
+            setTimeout(() => {
+                this.startTimer();
+            }, 300);
+        }
     }
-    
 
-    handleChangeText(email, password){      // TODO: make this work with the login
+    revealCode(){
+        if(timer<0&&this.state.password!=null&&this.state.password!=''){
+            this.setState({
+                revealedCode: 'Your code is: ' + this.state.password,
+                isCoderevealed: true,
+            });
+            setTimeout(() => {
+                this.startTimer();
+            }, 300);
+        }
+    }
+
+    async handleSignout(){
+        await _storeData('x-auth','');
+        await _storeData('email','');
+        await _storeData('password','');
+
+        this
+            .props
+            .navigation
+            .navigate('LoginScreen');
+    }
+
+    startTimer(){
+        console.log(timer+'<0&&'+this.state.isCoderevealed+'&&'+this.state.isIDrevealed)
+        if(timer<0&&this.state.isCoderevealed&&this.state.isIDrevealed){
+            timer = 10;
+            timerInterval = setInterval(() => {
+                timer--;
+                if(timer>0)
+                    this.setState({signOutTimer: timer});
+                else{
+                    this.setState({signOutTimer: 'Sign out.'});
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+    }
+
+    onChangeText(email, password){
         if(email!=null){
             this.setState({email});
         }
@@ -157,22 +164,34 @@ class ReturningScreen extends Component {
         if(this.state.isLoaded){
             return (
                 <View style={styles.container}>
+                    {/* <Button
+                        title="Sign In With Google"
+                        onPress={() => this.signInWithGoogleAsync()}/>
+                    <Button title="Play as a guest! ⚽" onPress={() => this.handleGuest()}/> */}
 
-                    <Text style={styles.title}>Log in with old ID and code</Text>
-                    <Text style={styles.warning}>Write the old ID and code that you had before in order to access your old skin collection.</Text>
+
+                    <Text style={styles.title}>Sign out</Text>
+                    <Text style={styles.warning}>Warning: if you lose your ID and code, you will lose access to your collected skins forever. There is no recovery option at all. You have to manually write down the ID and code on a piece of paper and remember it for a future login.</Text>
                     
                     <View style={styles.buttonSpace}>
                         <View style={styles.buttonSpace}>
-                                <TextInput style={styles.textInput} onEndEditing={(text)=>{ handleChangeText(text,null)}} placeholder='Your old ID' />
+                            <TouchableOpacity
+                                style={styles.button}>
+                                <Text onTouchStart={() => {this.revealID()}}> {this.state.revealedID}</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.buttonSpace}>
-                                <TextInput style={styles.textInput} onEndEditing={(text)=>{ handleChangeText(null,text)}} placeholder='Your old code' />
+                            <TouchableOpacity
+                                style={styles.button}>
+                                <Text onTouchStart={() => {this.revealCode()}}> {this.state.revealedCode}</Text>
+                            </TouchableOpacity>
                         </View>
+
 
                         <View style={styles.buttonSpace}>
                             <TouchableOpacity
-                                onPress={() => this.handleLogin()}
-                                style={styles.button}><Text>Log in</Text>
+                                onPress={() => this.handleSignout()}
+                                style={styles.button}><Text>{this.state.signOutTimer}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -184,18 +203,17 @@ class ReturningScreen extends Component {
 
                     <AdBar/>
                     <View
-                        style={{
-                        position: 'absolute',
-                        bottom: '30%',
-                        right: 0
+                    style={{
+                    position: 'absolute',
+                    bottom: '30%',
+                    right: 0
                     }}>
-                    <Button
-                        title="Exit!"
-                        style={{}}
-                        onPress={() => {
-                        this.handleExit()
-                    }}/></View>
-                
+                        <Button
+                            title="Exit!"
+                            style={{}}
+                            onPress={() => {
+                            this.handleExit()
+                        }}/></View>
                 </View>
             );
         }else{
@@ -208,7 +226,7 @@ class ReturningScreen extends Component {
     }
 }
 
-export default ReturningScreen;
+export default SignoutScreen;
 
 let displayAndroid = 'flex',displayIos = 'flex';
 if(Platform.OS=='android'){
@@ -232,7 +250,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#DDDDDD",
         display:displayAndroid,
-        padding: 10
+        padding: 10,
+        
     },
     buttonApple: {
         alignItems: "center",
@@ -255,7 +274,8 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     buttonSpace: {
-        width: '70%',
+        flexDirection: 'row',
+        alignContent: 'center',
         padding: 5
     },
     buttonSpaceCredits:{
@@ -272,9 +292,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 50
     },
-    textInput: {
-        borderStyle: 'solid',
-        borderWidth: 1,
-        paddingLeft: 4
+    warning: {
+        fontSize: 15,
+        padding: 10,
+        color: "#DD0000",
+        fontStyle: "italic",
+        fontWeight: "bold"
     }
 });

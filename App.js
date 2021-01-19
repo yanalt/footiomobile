@@ -12,6 +12,8 @@ import ThreeJSGameScreen from './screens/ThreeJSGameScreen';
 import ReloadScreen from './screens/ReloadScreen';
 import RoomsScreen from './screens/RoomsScreen';
 import CreditsScreen from './screens/CreditsScreen';
+import SignoutScreen from './screens/SignoutScreen';
+import ReturningScreen from './screens/ReturningScreen';
 
 
 
@@ -46,7 +48,9 @@ const AppSwitchNavigator = createSwitchNavigator({
   ThreeJSGameScreen: ThreeJSGameScreen,
   ReloadScreen: ReloadScreen,
   RoomsScreen: RoomsScreen,
-  CreditsScreen: CreditsScreen
+  CreditsScreen: CreditsScreen,
+  SignoutScreen: SignoutScreen,
+  ReturningScreen: ReturningScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);

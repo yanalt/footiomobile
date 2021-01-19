@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         flex: 1,
         backgroundColor: '#fff',
-        justifyContent: 'center'
+        // justifyContent: 'center'
     },
     
     button: {
