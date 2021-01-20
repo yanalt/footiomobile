@@ -78,29 +78,31 @@ class LoginScreen extends Component {
     
     async handleNewUser() {
         try{
-        console.log('handleNewUser');
-        let email = uid();
-        let password = upass();
+            console.log('handleNewUser');
+            let email = uid();
+            let password = upass();
 
-        console.log(email+' '+password);
-        
-        let res = await axios({
-            method: 'post',
-            url: hostConfig.address + '/users/', //network error solution: add http:// before the address in config......
-            data: {
-                email: email,
-                password: password
+            console.log(email+' '+password);
+            
+            let res = await axios({
+                method: 'post',
+                url: hostConfig.address + '/users/', //network error solution: add http:// before the address in config......
+                data: {
+                    email: email,
+                    password: password
+                }
+            });
+
+            if(res){
+                console.log(res.headers['x-auth']);
+                await _storeData('x-auth', res.headers['x-auth'])
+                await _storeData('email', email);
+                await _storeData('password', password);
+                this
+                    .props
+                    .navigation
+                    .navigate('DashboardScreen');
             }
-        });
-
-        console.log(res.headers['x-auth']);
-        await _storeData('x-auth', res.headers['x-auth'])
-        await _storeData('email', email);
-        await _storeData('password', password);
-        this
-            .props
-            .navigation
-            .navigate('DashboardScreen');
         }catch(e){
             console.log(e);
         }

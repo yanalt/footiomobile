@@ -89,27 +89,33 @@ class ReturningScreen extends Component {
         this.setState({isLoaded:true});
     }
 
-    handleLogin(){
+    
+
+    async handleLogin(){
         try{
-            console.log('handleLogin');
-    
-            let res = await axios({
-                method: 'post',
-                url: hostConfig.address + '/users/androidlogin', //network error solution: add http:// before the address in config......
-                data: {
-                    email: email,
-                    password: password
+                console.log('handleLogin');
+                console.log(this.state.email+' '+this.state.password);
+                if(this.state.email.length>0&&this.state.password.length>0){
+        
+                    let res = await axios({
+                        method: 'post',
+                        url: hostConfig.address + '/users/login', //network error solution: add http:// before the address in config......
+                        data: {
+                            email: this.state.email,
+                            password: this.state.password
+                        }
+                    });
+                    if(res){
+                        console.log(res.headers['x-auth']);
+                        await _storeData('x-auth', res.headers['x-auth'])
+                        await _storeData('email', this.state.email);
+                        await _storeData('password', this.state.password);
+                        this
+                            .props
+                            .navigation
+                            .navigate('DashboardScreen');
+                    }
                 }
-            });
-    
-            console.log(res.headers['x-auth']);
-            await _storeData('x-auth', res.headers['x-auth'])
-            await _storeData('email', email);
-            await _storeData('password', password);
-            this
-                .props
-                .navigation
-                .navigate('DashboardScreen');
             }catch(e){
                 console.log(e);
             }
@@ -118,9 +124,11 @@ class ReturningScreen extends Component {
 
     handleChangeText(email, password){      // TODO: make this work with the login
         if(email!=null){
+            console.log(email);
             this.setState({email});
         }
         if(password!=null){
+            console.log(password);
             this.setState({password});
         }
     }
@@ -163,10 +171,10 @@ class ReturningScreen extends Component {
                     
                     <View style={styles.buttonSpace}>
                         <View style={styles.buttonSpace}>
-                                <TextInput style={styles.textInput} onEndEditing={(text)=>{ handleChangeText(text,null)}} placeholder='Your old ID' />
+                                <TextInput style={styles.textInput} onEndEditing={(ev)=>{ this.handleChangeText(ev.nativeEvent.text,null)}} placeholder='Your old ID' />
                         </View>
                         <View style={styles.buttonSpace}>
-                                <TextInput style={styles.textInput} onEndEditing={(text)=>{ handleChangeText(null,text)}} placeholder='Your old code' />
+                                <TextInput style={styles.textInput} onEndEditing={(ev)=>{ this.handleChangeText(null,ev.nativeEvent.text)}} placeholder='Your old code' />
                         </View>
 
                         <View style={styles.buttonSpace}>

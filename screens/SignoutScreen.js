@@ -73,6 +73,8 @@ class SignoutScreen extends Component {
     }
 
     revealID(){
+        console.log(this.state.email);
+        console.log(timer+'<0&&'+this.state.email+'!=null&&'+this.state.email+'!=');
         if(timer<0&&this.state.email!=null&&this.state.email!=''){
             this.setState({
                 revealedID: 'Your ID is: ' + this.state.email,
@@ -85,6 +87,7 @@ class SignoutScreen extends Component {
     }
 
     revealCode(){
+        console.log(this.state.password);
         if(timer<0&&this.state.password!=null&&this.state.password!=''){
             this.setState({
                 revealedCode: 'Your code is: ' + this.state.password,
@@ -97,14 +100,17 @@ class SignoutScreen extends Component {
     }
 
     async handleSignout(){
-        await _storeData('x-auth','');
-        await _storeData('email','');
-        await _storeData('password','');
+        if(timer == 0 || timer == -1 || timer == 1){
+            timer = -2;
+            await _storeData('x-auth','');
+            await _storeData('email','');
+            await _storeData('password','');
 
-        this
-            .props
-            .navigation
-            .navigate('LoginScreen');
+            this
+                .props
+                .navigation
+                .navigate('LoginScreen');
+        }
     }
 
     startTimer(){
@@ -114,7 +120,7 @@ class SignoutScreen extends Component {
             timerInterval = setInterval(() => {
                 timer--;
                 if(timer>0)
-                    this.setState({signOutTimer: timer});
+                    this.setState({signOutTimer: 'Ready in ' + timer});
                 else{
                     this.setState({signOutTimer: 'Sign out.'});
                     clearInterval(timerInterval);
@@ -136,6 +142,7 @@ class SignoutScreen extends Component {
 
     handleExit() {
         console.log("handleExit");
+        timer = -2;
 
         _retrieveData('x-auth').then((val) => {
             console.log(val);
@@ -209,7 +216,7 @@ class SignoutScreen extends Component {
                     right: 0
                     }}>
                         <Button
-                            title="Exit!"
+                            title="Cancel!"
                             style={{}}
                             onPress={() => {
                             this.handleExit()
