@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     buttonSpaceSignOut: {
         padding: 10,
         position: 'absolute',
-        bottom: '10%',
+        bottom: '15%',
         right: 0
     },
     buttonSpaceCredits:{

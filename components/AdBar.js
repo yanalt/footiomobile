@@ -5,9 +5,13 @@ import {adMobConfig} from '../config';
 
 export default function AdBar(props) {
     let style = {
-        position: 'absolute',
-        left: 30,
-        width: '100%'
+		position: 'absolute',
+		flex: 1,
+		width: '100%',
+	},
+	style1 = {
+        alignItems: 'center',
+		justifyContent: 'center',
     }
     if (props.top) 
         style.top = 0;
@@ -19,11 +23,13 @@ export default function AdBar(props) {
     if (Platform.OS == 'android' || Platform.OS == 'ios') {
 		return (
 			<View style={style}>
-	
-				<AdMobBanner adSize="smartBannerPortrait"
+				<View style={style1}>
+					<AdMobBanner adSize="smartBannerPortrait"
 					adUnitID={
 						adMobConfig.AdBarID
-					}/></View>
+					}/>
+				</View>
+			</View>
 		);   
     }else{
 		return(

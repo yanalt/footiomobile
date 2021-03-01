@@ -1338,7 +1338,7 @@ function movePlayers() {
             }
         }
         if (currentExpanded && currentExpanded.characterSprite && currentExpanded.characterCircle) {
-            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 50, 10);
+            currentExpanded.characterSprite.position.set(users[i].x, - users[i].y + 50, users[i].y/1000 + 10);
             currentExpanded.characterCircle.position.set(users[i].x, - users[i].y, 10);
             let index = currentExpanded.emoji;
             if(index===0||(index&&index!=-1)){
