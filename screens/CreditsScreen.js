@@ -5,10 +5,10 @@ import {
     Button,
     View,
     AsyncStorage,
-    Linking,TouchableOpacity
+    Linking,TouchableOpacity,LogBox
 } from 'react-native';
 import AdBar from '../components/AdBar';
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true);
 
 
 const bannerWidths = [200, 250, 320];

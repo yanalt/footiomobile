@@ -8,13 +8,13 @@ import {
     View,
     AsyncStorage,
     TextInput,
-    Platform
+    Platform,LogBox
 } from 'react-native';
 import axios from 'axios';
 import {hostConfig} from '../config';
 import AdBar from '../components/AdBar';
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true);
 console.warn = function() {};
 
 async function _storeData (str, val) {

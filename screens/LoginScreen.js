@@ -7,7 +7,7 @@ import {
     Text,
     View,
     AsyncStorage,
-    Platform
+    Platform,LogBox
 } from 'react-native';
 import * as Expo from 'expo';
 import axios from 'axios';
@@ -19,7 +19,7 @@ let uidDictionary = ['a','b','c','d','e','f','g','h','i','j','k','m','n','p','q'
 const uid = new ShortUniqueId({ dictionary: uidDictionary , length: 6 });
 const upass = new ShortUniqueId({ dictionary: uidDictionary , length: 8 });
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true);
 console.warn = function() {};
 
 async function _storeData (str, val) {

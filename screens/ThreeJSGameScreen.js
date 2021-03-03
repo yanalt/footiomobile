@@ -11,7 +11,7 @@ import {hostConfig,adMobConfig} from '../config';
 
 import {View,
     Dimensions,Text,Platform,
-    AsyncStorage,Image,StatusBar} from 'react-native';
+    AsyncStorage,Image,StatusBar,LogBox} from 'react-native';
 import io from 'socket.io-client';
 import {
     Mesh,
@@ -30,7 +30,7 @@ import {
 } from 'three';
 
 
-console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true);
 console.ignoredYellowBox = ['Setting a timer'];
 
 let instructions = 0;

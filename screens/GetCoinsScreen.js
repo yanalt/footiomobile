@@ -5,13 +5,14 @@ import {
     Button,
     View,
     AsyncStorage,
-    TouchableOpacity
+    TouchableOpacity,LogBox
 } from 'react-native';
 import axios from 'axios';
 import {hostConfig,adMobConfig} from '../config';
 import AdBar from '../components/AdBar';
 import {AdMobBanner, AdMobInterstitial, PublisherBanner, AdMobRewarded} from 'expo-ads-admob';
-console.disableYellowBox = true;
+
+LogBox.ignoreAllLogs(true);
 
 
 const bannerWidths = [200, 250, 320];

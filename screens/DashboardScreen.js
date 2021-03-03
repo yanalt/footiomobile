@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import AdBar from '../components/AdBar';
+import {hostConfig} from '../config';
 
 
 async function _storeData(str, val) {
@@ -42,16 +43,43 @@ class DashboardScreen extends Component {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        try{
+            let xauth = await _retrieveData('x-auth');
+                // if(val)
+                //     this.setState({isLoading: false});
+                
+            let response = await axios({
+                method: 'post',
+                headers: {
+                    'x-auth': xauth
+                },
+                url: hostConfig.address + '/users/skintoken'
+            });
 
-        _retrieveData('x-auth').then((val) => {
-            //   console.log(val);
-            xauth = val;
-            this.setState({isLoading: false});
-        }).catch((e) => {
+            if (response){
+                this.setState({isLoading: false});
+            }
+            else{
+                let email = await _retrieveData('email');
+                let password = await _retrieveData('password');
+                let res = await axios({
+                    method: 'post',
+                    url: hostConfig.address + '/users/login', //network error solution: add http:// before the address in config......
+                    data: {
+                        email,
+                        password
+                    }
+                });
+                if(res){
+                    console.log(res.headers['x-auth']);
+                    await _storeData('x-auth', res.headers['x-auth']);
+                    this.setState({isLoading: false});
+                }
+            }
+        }catch(e){
             console.log(e);
-        });
-
+        }
     }
 
     onChangeText(text){
