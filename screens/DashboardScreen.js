@@ -59,8 +59,11 @@ class DashboardScreen extends Component {
 
             if (response){
                 this.setState({isLoading: false});
-            }
-            else{
+            }else
+                throw(e);
+            
+        }catch(e){
+            try{
                 let email = await _retrieveData('email');
                 let password = await _retrieveData('password');
                 let res = await axios({
@@ -76,9 +79,10 @@ class DashboardScreen extends Component {
                     await _storeData('x-auth', res.headers['x-auth']);
                     this.setState({isLoading: false});
                 }
+            }catch(e2){
+                console.log(e);
+                console.log(e2);
             }
-        }catch(e){
-            console.log(e);
         }
     }
 
