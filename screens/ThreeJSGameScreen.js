@@ -37,6 +37,7 @@ let instructions = 0;
 let timeout;
 let reactAppHolder;
 let ballImg;
+let ballSprites = [];
 let frames = 0;
 let characters = [];
 let emojis = [];
@@ -57,7 +58,6 @@ let ballSprite,
 let kickSounds = [];
 let netSounds = [];
 let soundCount = 0;
-
 const scene = new Scene();
 
 
@@ -300,7 +300,6 @@ class ThreeJSGameScreen extends React.Component {
             AdMobInterstitial.setTestDeviceID([AdMobInterstitial.simulatorId]);
             AdMobInterstitial.setAdUnitID(adMobConfig.AdMobInterstitialID);
         }
-        loadCSS(Dimensions.get('window').width,Dimensions.get('window').height);
     }
 
     handleExit() {
@@ -466,6 +465,7 @@ function handleLayout(event){
     global.screenHeight=height;
     global.centerY = global.screenHeight-0.075*global.screenWidth-10;
     global.centerX = 0.11*global.screenWidth;
+    loadCSS(width,height);
 }
 
 function handleDirection(event){
@@ -726,6 +726,9 @@ async function handleContextCreate(gl) {
 
 function loadCSS(w, h){
     
+
+    console.log(w, h);
+
     let styles ={};
     global.centerY = h-0.1*w-10;
     global.centerX = 0.11*w;
@@ -1019,7 +1022,7 @@ async function setupSocket(socket) {
 
         // slower socket for non-movement information
 
-        socket.on('4', function (serverScore, serverUsers) {
+        socket.on('4', async function (serverScore, serverUsers, ballSpriteId) {
 
             if (serverScore) {
                 if(score.blue==0&&score.red==0)
@@ -1027,6 +1030,22 @@ async function setupSocket(socket) {
                         score:serverScore
                     });
                 score = serverScore;
+            }
+
+            if(ballSpriteId){
+                ballImg = await loadTextureSafely(ballSprites[ballSpriteId]);
+                ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
+                ballImg.repeat.set( 1 / 10, 1 );
+                // console.log(ballImg);
+                scene.remove(ballSprite);
+                ballMaterial = new SpriteMaterial({
+                    map: ballImg,
+                    color: 0xffffff
+                });
+                ballSprite = new Sprite(ballMaterial);
+                ballSprite.position.set(ball.x, - ball.y,25);
+                ballSprite.scale.set(18, 18, 1);
+                scene.add(ballSprite);
             }
             
             
@@ -1135,8 +1154,8 @@ function drawBall(ball) {
             ballSprite.position.set(ball.x, - ball.y,-20);
         else
             ballSprite.position.set(ball.x, - ball.y,25);
-
-        ballCircle.position.set(ball.x, - ball.y,18);
+        if(ballCircle)
+            ballCircle.position.set(ball.x, - ball.y,18);
     } else if (ballImg) {
         ballMaterial = new SpriteMaterial({
             map: ballImg,
@@ -1586,12 +1605,21 @@ async function JUSTloadMyShitUp() {
         characters[98] = require('../assets/img/98.png');
         characters[99] = require('../assets/img/99.png');
 
+        ballSprites[0] = require('../assets/img/ball_0.png');
+        ballSprites[1] = require('../assets/img/ball_1.png');
+        ballSprites[2] = require('../assets/img/ball_2.png');
+        ballSprites[3] = require('../assets/img/ball_3.png');
+        ballSprites[4] = require('../assets/img/ball_4.png');
+        ballSprites[5] = require('../assets/img/ball_5.png');
+        ballSprites[6] = require('../assets/img/ball_6.png');
+        ballSprites[7] = require('../assets/img/ball_7.png');
+
 
 
         goalDirection.img = await loadTextureSafely(require('../assets/img/emojis/goal.png'));
         ballDirection.img = await loadTextureSafely(require('../assets/img/emojis/ball.png'));
         goalkeepers[0].img = await loadTextureSafely(require('../assets/img/goalkeeper.png'));
-        ballImg = await loadTextureSafely(require('../assets/img/ball_0.png'));
+        ballImg = await loadTextureSafely(ballSprites[0]);
         ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
         ballImg.repeat.set( 1 / 10, 1 );
 

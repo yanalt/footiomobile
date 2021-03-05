@@ -94,12 +94,62 @@ class LoadingScreen extends Component {
                 .navigation
                 .navigate('LoginScreen');
         }else{
-            console.log('user is logged in!');
+            console.log('an x-auth exists locally');
+            let response = null;
+            try{
+                response = await axios({
+                    method: 'post',
+                    headers: {
+                        'x-auth': xAuthVal
+                    },
+                    url: hostConfig.address + '/users/skintoken'
+                });
+            }catch(e){
+                console.log('lmao ');
+                console.log(e);
+            }
+            if (response){
+                console.log('the x-auth is good, redirect to dashboard');
+                this.setState({isLoading: false});
+                this
+                    .props
+                    .navigation
+                    .navigate('DashboardScreen');
+            }else{
+                console.log('that x-auth is no longer recognized');
+                let email = await _retrieveData('email');
+                let password = await _retrieveData('password');
+                
+                let loginRes = null;
+                try{
+                    loginRes= await axios({
+                        method: 'post',
+                        url: hostConfig.address + '/users/login', //network error solution: add http:// before the address in config......
+                        data: {
+                            email: email,
+                            password: password
+                        }
+                    });
+                }catch(e){
+                    console.log(e);
+                }
+                if(loginRes){
+                    console.log('successfully received new x-auth');
+                    await _storeData('x-auth', loginRes.headers['x-auth']);
+                    this
+                        .props
+                        .navigation
+                        .navigate('DashboardScreen');
+                }else{
+                    console.log('the absolute state of this lad');
+                    this
+                        .props
+                        .navigation
+                        .navigate('LoginErrorScreen');
+                }
 
-            this
-                .props
-                .navigation
-                .navigate('DashboardScreen');
+            }
+
         }
 
     }

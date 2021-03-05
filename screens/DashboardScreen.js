@@ -161,10 +161,7 @@ class DashboardScreen extends Component {
                     }}
                         style={styles.button}>
                         <Text style={styles.buttonText}>PICK SKIN</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.buttonSpace}>
+                    </TouchableOpacity><Text>   </Text>
                     <TouchableOpacity
                         onPress={() => {
                         this.handleBallShop()
@@ -223,9 +220,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingTop:0,
+        paddingTop:10,
         backgroundColor: '#fff',
-        justifyContent: 'center'
     },
     button: {
         alignItems: "center",
@@ -255,10 +251,14 @@ const styles = StyleSheet.create({
         padding: 10
     },
     buttonText: {
-        fontSize: 30
+        fontSize: 20
     },
     buttonSpace: {
         width: '70%',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
         padding: 5
     },
     title: {
