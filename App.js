@@ -14,6 +14,8 @@ import RoomsScreen from './screens/RoomsScreen';
 import CreditsScreen from './screens/CreditsScreen';
 import SignoutScreen from './screens/SignoutScreen';
 import ReturningScreen from './screens/ReturningScreen';
+import BallShopScreen from './screens/BallShopScreen';
+import LoginErrorScreen from './screens/LoginErrorScreen';
 
 
 
@@ -50,7 +52,9 @@ const AppSwitchNavigator = createSwitchNavigator({
   RoomsScreen: RoomsScreen,
   CreditsScreen: CreditsScreen,
   SignoutScreen: SignoutScreen,
-  ReturningScreen: ReturningScreen
+  ReturningScreen: ReturningScreen,
+  BallShopScreen: BallShopScreen,
+  LoginErrorScreen: LoginErrorScreen
 });
 
 const AppNavigator = createAppContainer(AppSwitchNavigator);

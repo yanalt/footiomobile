@@ -1,6 +1,7 @@
 {
     "hostConfig":{
-        "address": "https://footio.com.de"
+        "address1": "https://footio.com.de",
+        "address": "http://10.0.0.11:3000"
     },
     "adMobConfig":{
         

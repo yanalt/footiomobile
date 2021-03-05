@@ -252,8 +252,9 @@ class ThreeJSGameScreen extends React.Component {
            ip:this.props.navigation.state.params.ip,
            port:this.props.navigation.state.params.port,
         }
+        console.log(this.state.ip + ':' + this.state.port);
         if(this.state.ip=='localhost')
-            this.state.ip='10.0.0.5';
+            this.state.ip='http://10.0.0.11';
         reactAppHolder = this;
     }
 
@@ -1133,7 +1134,7 @@ function drawBall(ball) {
         if(-ball.y>-player.y+5&&ball.x<player.x+9&&ball.x>player.x-9)
             ballSprite.position.set(ball.x, - ball.y,-20);
         else
-            ballSprite.position.set(ball.x, - ball.y,20);
+            ballSprite.position.set(ball.x, - ball.y,25);
 
         ballCircle.position.set(ball.x, - ball.y,18);
     } else if (ballImg) {
@@ -1217,7 +1218,7 @@ function drawGoalDirection(team) {
             emojiDeltaY = -60;
         
 
-        goalDirection.sprite.position.set(player.x + emojiDeltaX, -(player.y + emojiDeltaY), 10);
+        goalDirection.sprite.position.set(player.x + emojiDeltaX, -(player.y + emojiDeltaY), 15);
 
 
     } catch {
@@ -1295,7 +1296,7 @@ function drawBallDirection() {
                 emojiDeltaX = ((ball.x - player.x) * 60) / distance;
                 emojiDeltaY = ((ball.y - player.y) * 60) / distance;
             }
-            ballDirection.sprite.position.set(emojiDeltaX + player.x, -(emojiDeltaY + player.y), 10);
+            ballDirection.sprite.position.set(emojiDeltaX + player.x, -(emojiDeltaY + player.y), 15);
         }
     } catch {
         if (! ballDirection.sprite) {
@@ -1307,7 +1308,8 @@ function drawBallDirection() {
                 scene.add(ballDirection.sprite);
             }
         }
-    }}
+    }
+}
 
 
 
@@ -1584,48 +1586,6 @@ async function JUSTloadMyShitUp() {
         characters[98] = require('../assets/img/98.png');
         characters[99] = require('../assets/img/99.png');
 
-
-        characters[100]=require('../assets/img/100.png');
-        characters[101]=require('../assets/img/101.png');
-        characters[102]=require('../assets/img/102.png');
-        characters[103]=require('../assets/img/103.png');
-        characters[104]=require('../assets/img/104.png');
-        characters[105]=require('../assets/img/105.png');
-        characters[106]=require('../assets/img/106.png');
-        characters[107]=require('../assets/img/107.png');
-        characters[108]=require('../assets/img/108.png');
-        characters[109]=require('../assets/img/109.png');
-    
-        characters[110]=require('../assets/img/110.png');
-        characters[111]=require('../assets/img/111.png');
-        characters[112]=require('../assets/img/112.png');
-        characters[113]=require('../assets/img/113.png');
-        characters[114]=require('../assets/img/114.png');
-        characters[115]=require('../assets/img/115.png');
-        characters[116]=require('../assets/img/116.png');
-        characters[117]=require('../assets/img/117.png');
-        characters[118]=require('../assets/img/118.png');
-        characters[119]=require('../assets/img/119.png');
-    
-        characters[120]=require('../assets/img/120.png');
-        characters[121]=require('../assets/img/121.png');
-        characters[122]=require('../assets/img/122.png');
-        characters[123]=require('../assets/img/123.png');
-        characters[124]=require('../assets/img/124.png');
-        characters[125]=require('../assets/img/125.png');
-        characters[126]=require('../assets/img/126.png');
-        characters[127]=require('../assets/img/127.png');
-        characters[128]=require('../assets/img/128.png');
-        characters[129]=require('../assets/img/129.png');
-    
-        characters[130]=require('../assets/img/130.png');
-        characters[131]=require('../assets/img/131.png');
-        characters[132]=require('../assets/img/132.png');
-        characters[133]=require('../assets/img/133.png');
-        characters[134]=require('../assets/img/134.png');
-        characters[135]=require('../assets/img/135.png');
-        characters[136]=require('../assets/img/136.png');
-        characters[137]=require('../assets/img/137.png');
 
 
         goalDirection.img = await loadTextureSafely(require('../assets/img/emojis/goal.png'));

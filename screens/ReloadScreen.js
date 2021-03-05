@@ -13,7 +13,11 @@ class ReloadScreen extends Component {
     }
 
     componentDidMount(){
-        this.props.navigation.navigate('NativeShopScreen');
+        let destination = this.props.navigation.state.params.page;
+        if(!destination)
+            this.props.navigation.navigate('NativeShopScreen');
+        else
+            this.props.navigation.navigate(destination);
     }
     
     render() {

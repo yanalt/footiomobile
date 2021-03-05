@@ -115,7 +115,7 @@ class NativeShopScreen extends Component {
         this
             .props
             .navigation
-            .navigate('ReloadScreen');
+            .navigate('ReloadScreen',{page:'NativeShopScreen'});
     };
 
 
@@ -613,48 +613,6 @@ function preload(){
     portraits[98]=require('../assets/img/portraits/98.png');
     portraits[99]=require('../assets/img/portraits/99.png');
 
-    portraits[100]=require('../assets/img/portraits/100.png');
-    portraits[101]=require('../assets/img/portraits/101.png');
-    portraits[102]=require('../assets/img/portraits/102.png');
-    portraits[103]=require('../assets/img/portraits/103.png');
-    portraits[104]=require('../assets/img/portraits/104.png');
-    portraits[105]=require('../assets/img/portraits/105.png');
-    portraits[106]=require('../assets/img/portraits/106.png');
-    portraits[107]=require('../assets/img/portraits/107.png');
-    portraits[108]=require('../assets/img/portraits/108.png');
-    portraits[109]=require('../assets/img/portraits/109.png');
-
-    portraits[110]=require('../assets/img/portraits/110.png');
-    portraits[111]=require('../assets/img/portraits/111.png');
-    portraits[112]=require('../assets/img/portraits/112.png');
-    portraits[113]=require('../assets/img/portraits/113.png');
-    portraits[114]=require('../assets/img/portraits/114.png');
-    portraits[115]=require('../assets/img/portraits/115.png');
-    portraits[116]=require('../assets/img/portraits/116.png');
-    portraits[117]=require('../assets/img/portraits/117.png');
-    portraits[118]=require('../assets/img/portraits/118.png');
-    portraits[119]=require('../assets/img/portraits/119.png');
-
-    portraits[120]=require('../assets/img/portraits/120.png');
-    portraits[121]=require('../assets/img/portraits/121.png');
-    portraits[122]=require('../assets/img/portraits/122.png');
-    portraits[123]=require('../assets/img/portraits/123.png');
-    portraits[124]=require('../assets/img/portraits/124.png');
-    portraits[125]=require('../assets/img/portraits/125.png');
-    portraits[126]=require('../assets/img/portraits/126.png');
-    portraits[127]=require('../assets/img/portraits/127.png');
-    portraits[128]=require('../assets/img/portraits/128.png');
-    portraits[129]=require('../assets/img/portraits/129.png');
-
-    portraits[130]=require('../assets/img/portraits/130.png');
-    portraits[131]=require('../assets/img/portraits/131.png');
-    portraits[132]=require('../assets/img/portraits/132.png');
-    portraits[133]=require('../assets/img/portraits/133.png');
-    portraits[134]=require('../assets/img/portraits/134.png');
-    portraits[135]=require('../assets/img/portraits/135.png');
-    portraits[136]=require('../assets/img/portraits/136.png');
-    portraits[137]=require('../assets/img/portraits/137.png');
-
 
 
 
@@ -778,47 +736,6 @@ function preload(){
     flags[99]=require('../assets/img/flags/99.png');
 
 
-    flags[100]=require('../assets/img/flags/100.png');
-    flags[101]=require('../assets/img/flags/101.png');
-    flags[102]=require('../assets/img/flags/102.png');
-    flags[103]=require('../assets/img/flags/103.png');
-    flags[104]=require('../assets/img/flags/104.png');
-    flags[105]=require('../assets/img/flags/105.png');
-    flags[106]=require('../assets/img/flags/106.png');
-    flags[107]=require('../assets/img/flags/107.png');
-    flags[108]=require('../assets/img/flags/108.png');
-    flags[109]=require('../assets/img/flags/109.png');
-
-    flags[110]=require('../assets/img/flags/110.png');
-    flags[111]=require('../assets/img/flags/111.png');
-    flags[112]=require('../assets/img/flags/112.png');
-    flags[113]=require('../assets/img/flags/113.png');
-    flags[114]=require('../assets/img/flags/114.png');
-    flags[115]=require('../assets/img/flags/115.png');
-    flags[116]=require('../assets/img/flags/116.png');
-    flags[117]=require('../assets/img/flags/117.png');
-    flags[118]=require('../assets/img/flags/118.png');
-    flags[119]=require('../assets/img/flags/119.png');
-
-    flags[120]=require('../assets/img/flags/120.png');
-    flags[121]=require('../assets/img/flags/121.png');
-    flags[122]=require('../assets/img/flags/122.png');
-    flags[123]=require('../assets/img/flags/123.png');
-    flags[124]=require('../assets/img/flags/124.png');
-    flags[125]=require('../assets/img/flags/125.png');
-    flags[126]=require('../assets/img/flags/126.png');
-    flags[127]=require('../assets/img/flags/127.png');
-    flags[128]=require('../assets/img/flags/128.png');
-    flags[129]=require('../assets/img/flags/129.png');
-
-    flags[130]=require('../assets/img/flags/130.png');
-    flags[131]=require('../assets/img/flags/131.png');
-    flags[132]=require('../assets/img/flags/132.png');
-    flags[133]=require('../assets/img/flags/133.png');
-    flags[134]=require('../assets/img/flags/134.png');
-    flags[135]=require('../assets/img/flags/135.png');
-    flags[136]=require('../assets/img/flags/136.png');
-    flags[137]=require('../assets/img/flags/137.png');
     
 }
 

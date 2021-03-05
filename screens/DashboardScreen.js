@@ -48,7 +48,6 @@ class DashboardScreen extends Component {
             let xauth = await _retrieveData('x-auth');
                 // if(val)
                 //     this.setState({isLoading: false});
-                
             let response = await axios({
                 method: 'post',
                 headers: {
@@ -56,7 +55,6 @@ class DashboardScreen extends Component {
                 },
                 url: hostConfig.address + '/users/skintoken'
             });
-
             if (response){
                 this.setState({isLoading: false});
             }else
@@ -82,6 +80,10 @@ class DashboardScreen extends Component {
             }catch(e2){
                 console.log(e);
                 console.log(e2);
+                this
+                    .props
+                    .navigation
+                    .navigate('LoginErrorScreen');
             }
         }
     }
@@ -110,6 +112,14 @@ class DashboardScreen extends Component {
             .navigation
             .navigate('NativeShopScreen');
     }
+
+    handleBallShop() {
+        this
+            .props
+            .navigation
+            .navigate('BallShopScreen');
+    }
+
     handleGetCoins() {
         this
             .props
@@ -153,6 +163,17 @@ class DashboardScreen extends Component {
                         <Text style={styles.buttonText}>PICK SKIN</Text>
                     </TouchableOpacity>
                 </View>
+
+                <View style={styles.buttonSpace}>
+                    <TouchableOpacity
+                        onPress={() => {
+                        this.handleBallShop()
+                    }}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>PICK BALL</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={styles.buttonSpace}>
                     <TouchableOpacity
                         onPress={() => {
