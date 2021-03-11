@@ -4,7 +4,7 @@
         "address": "http://10.0.0.11:3000"
     },
     "adMobConfig":{
-        
+
         "AdBarID": "ca-app-pub-3940256099942544/2934735716",
         "AdMobRewardedID": "ca-app-pub-3940256099942544/5224354917",
         "AdMobInterstitialID" : "ca-app-pub-3940256099942544/1033173712",

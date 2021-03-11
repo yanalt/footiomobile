@@ -7,6 +7,7 @@ import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import {AdMobBanner, AdMobInterstitial} from 'expo-ads-admob';
 import {hostConfig,adMobConfig} from '../config';
+
 // import AdBar from '../components/AdBar';
 
 import {View,
@@ -58,6 +59,8 @@ let ballSprite,
 let kickSounds = [];
 let netSounds = [];
 let soundCount = 0;
+let lastBallId = 0;
+
 const scene = new Scene();
 
 
@@ -1032,7 +1035,8 @@ async function setupSocket(socket) {
                 score = serverScore;
             }
 
-            if(ballSpriteId){
+            if(ballSpriteId != lastBallId){
+                lastBallId = ballSpriteId;
                 ballImg = await loadTextureSafely(ballSprites[ballSpriteId]);
                 ballImg.wrapT = ballImg.wrapS = RepeatWrapping;
                 ballImg.repeat.set( 1 / 10, 1 );
@@ -1056,7 +1060,7 @@ async function setupSocket(socket) {
                         usersExpanded[i].emoji=u.emoji;
                         if(usersExpanded[i].team != u.team){
                             usersExpanded[i].team = u.team;
-                            usersExpanded[i].characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
+                            // usersExpanded[i].characterCircle = drawCircle(u.x, - u.y, 28, 32, u.id, u.team ? 'red' : 'blue',false);
                         }
                         
                         return;
