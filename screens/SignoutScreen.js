@@ -138,7 +138,6 @@ class SignoutScreen extends Component {
         }
     }
 
-    // TODO: make the submit button work
 
     handleExit() {
         console.log("handleExit");

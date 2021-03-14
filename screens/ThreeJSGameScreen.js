@@ -10,6 +10,8 @@ import {hostConfig,adMobConfig} from '../config';
 
 // import AdBar from '../components/AdBar';
 
+// TODO: circle colors sometimes don't match!
+
 import {View,
     Dimensions,Text,Platform,
     AsyncStorage,Image,StatusBar,LogBox} from 'react-native';
@@ -35,6 +37,7 @@ LogBox.ignoreAllLogs(true);
 console.ignoredYellowBox = ['Setting a timer'];
 
 let instructions = 0;
+let victories = -1;
 let timeout;
 let reactAppHolder;
 let ballImg;
@@ -414,7 +417,8 @@ function checkGoal(){
                 reactAppHolder.setState({
                     goalScoredText: 'RED WINS!'
                 });
-                if(!showingInterstitial){
+                if(!showingInterstitial && victories%2==1){
+                    console.log('victories: ' + victories);
                     showInterstitial();
                     showingInterstitial = true;
                 }
@@ -431,7 +435,8 @@ function checkGoal(){
                 reactAppHolder.setState({
                     goalScoredText: 'BLUE WINS!'
                 });
-                if(!showingInterstitial){
+                if(!showingInterstitial && victories%3==2){
+                    console.log('victories: ' + victories);
                     showInterstitial();
                     showingInterstitial = true;
                 }
@@ -921,8 +926,11 @@ function startGame() {
     global.playerName = "";
     if (! socket) {
         try{
-            console.log('connecting to ' + reactAppHolder.state.ip+':'+reactAppHolder.state.port);
-            socket = io.connect(reactAppHolder.state.ip+':'+reactAppHolder.state.port, {
+            let url = reactAppHolder.state.ip;
+            if(url.search('localhost')!=-1)
+                url = 'http://10.0.0.11';
+            console.log('connecting to ' + url+':'+reactAppHolder.state.port);
+            socket = io.connect(url+':'+reactAppHolder.state.port, {
                 transports: ['websocket'],
                 jsonp: false
             });
@@ -930,6 +938,7 @@ function startGame() {
                 console.log('connected to socket server');
             });
             socket.on('connect_error',(e)=>{
+                console.log('connection error!');
                 console.log(e);
             })
             setupSocket(socket);
@@ -1032,6 +1041,9 @@ async function setupSocket(socket) {
                     reactAppHolder.setState({
                         score:serverScore
                     });
+                if((serverScore.red == 5 || serverScore.blue == 5)&&
+                   (score.red != serverScore.red || score.blue != serverScore.blue))
+                   victories++;
                 score = serverScore;
             }
 

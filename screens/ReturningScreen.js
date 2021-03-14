@@ -122,7 +122,7 @@ class ReturningScreen extends Component {
     }
     
 
-    handleChangeText(email, password){      // TODO: make this work with the login
+    handleChangeText(email, password){     
         if(email!=null){
             console.log(email);
             this.setState({email});
@@ -133,7 +133,6 @@ class ReturningScreen extends Component {
         }
     }
 
-    // TODO: make the submit button work
 
     handleExit() {
         console.log("handleExit");
