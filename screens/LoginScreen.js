@@ -193,12 +193,7 @@ class LoginScreen extends Component {
 export default LoginScreen;
 
 let displayAndroid = 'flex',displayIos = 'flex';
-if(Platform.OS=='android'){
-    displayIos = 'flex';
-}
-if(Platform.OS=='ios'){
-    displayAndroid='none';
-}
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,9 +1,10 @@
 {
     "hostConfig":{
-        "address1": "https://footio.com.de",
-        "address": "http://10.0.0.11:3000"
+        "address": "https://footio.com.de",
+        "address1": "http://10.0.0.11:3000"
     },
     "adMobConfig":{
+
 
         "AdBarID": "ca-app-pub-3940256099942544/2934735716",
         "AdMobRewardedID": "ca-app-pub-3940256099942544/5224354917",
@@ -13,8 +14,12 @@
         "TestAdMobRewardedID": "ca-app-pub-3940256099942544/5224354917",
         "TestAdMobInterstitialID" : "ca-app-pub-3940256099942544/1033173712",
 
-        "RealAdBarID": "ca-app-pub-2084501738226097/2969526779",
-        "RealAdMobRewardedID": "ca-app-pub-2084501738226097/7370385339",
-        "RealAdMobInterstitialID" : "ca-app-pub-2084501738226097/4994965405"
+        "AndroidAdBarID": "ca-app-pub-2084501738226097/2969526779",
+        "AndroidAdMobRewardedID": "ca-app-pub-2084501738226097/7370385339",
+        "AndroidAdMobInterstitialID" : "ca-app-pub-2084501738226097/4994965405",
+
+        "iOSAdBarID": "ca-app-pub-2084501738226097/9595074759",
+        "iOSAdMobRewardedID": "ca-app-pub-2084501738226097/8556776512",
+        "iOSAdMobInterstitialID" : "ca-app-pub-2084501738226097/1445940236"
     }
 }

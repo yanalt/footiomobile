@@ -218,12 +218,7 @@ class ReturningScreen extends Component {
 export default ReturningScreen;
 
 let displayAndroid = 'flex',displayIos = 'flex';
-if(Platform.OS=='android'){
-    displayIos = 'flex';
-}
-if(Platform.OS=='ios'){
-    displayAndroid='none';
-}
+
 
 const styles = StyleSheet.create({
     container: {

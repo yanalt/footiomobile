@@ -461,7 +461,6 @@ function checkGoal(){
 
 
 function handleSprint(){
-    // instructions++;
     socket.emit('sprint');
 }
 
@@ -479,7 +478,6 @@ function handleLayout(event){
 function handleDirection(event){
     console.log('1');
     if(global.centerX&&global.centerY){
-        instructions++;
         target.x=event.nativeEvent.touches[0].pageX-global.centerX; target.y=event.nativeEvent.touches[0].pageY-global.centerY;
         // let str = ''
         //     str += '(' + Math.floor(event.nativeEvent.touches[0].locationX) + ',' + Math.floor(event.nativeEvent.touches[0].locationY) + ') ';
@@ -488,7 +486,6 @@ function handleDirection(event){
 
 function handleTouchMove(event){
     if(global.centerX&&global.centerY){ //need more than 1.5
-        instructions++; // check why it is slow to move down compared to up
         target.x=5*(event.nativeEvent.touches[0].pageX-global.centerX); 
         target.y=5*(event.nativeEvent.touches[0].pageY-global.centerY);
         // let str = '';
@@ -551,7 +548,6 @@ function handleTouchStart(event){
 }
 
 function handleBallKickStart(){ 
-    instructions++;
     startKick = new Date().getTime();
 }
 
@@ -562,7 +558,6 @@ function handleTouchEnd(event){
     let leftBorder =reactAppHolder.state.styles.ballKickCSS.left;
     let rightBorder = leftBorder + reactAppHolder.state.styles.ballKickCSS.width;
     if(x>=leftBorder&&x<rightBorder){
-        instructions++;
         let endKick = new Date().getTime();
         let delta = endKick-startKick;
         if(delta>1000)
@@ -573,7 +568,6 @@ function handleTouchEnd(event){
 }
 
 function handleBallKickEnd(event){
-    instructions++;
     let endKick = new Date().getTime();
     let delta = endKick-startKick;
     if(delta>1000)
@@ -1010,7 +1004,6 @@ async function setupSocket(socket) {
         socket.on('3', function (userData, serverBall, serverGoalkeepers) {
             let playerData;
             for (let i = 0; i < userData.length; i++) {
-                instructions++;
                 if (typeof(userData[i].id) == "undefined") {
                     playerData = userData[i];
                     i = userData.length;
@@ -1067,7 +1060,6 @@ async function setupSocket(socket) {
             
             serverUsers.forEach((u) => {
                 for (let i = 0; i < usersExpanded.length; i++) {
-                    instructions++;
                     if (usersExpanded[i].id == u.id) {
                         usersExpanded[i].emoji=u.emoji;
                         if(usersExpanded[i].team != u.team){
@@ -1097,7 +1089,6 @@ async function setupSocket(socket) {
 
         socket.on('playerDisconnect', function (data) {
             for (let i = 0; i < usersExpanded.length; i++) {
-                instructions++;
                 if (usersExpanded[i].id == data.id){ 
                     console.log('spliced 2');
                     scene.remove(usersExpanded[i].characterCircle);
@@ -1366,7 +1357,6 @@ function movePlayers() {
         instructions+=6;
         let currentExpanded;
         for (let j = 0; j < usersExpanded.length; j++) {
-            instructions++;
             if (usersExpanded[j].id == users[i].id || usersExpanded[j].id == users[i].idz) {
                 currentExpanded = usersExpanded[j];
                 if(player.x==users[i].x&&player.y==users[i].y){
@@ -1399,7 +1389,6 @@ function movePlayers() {
 // }
 
 function drawgoals() {
-    instructions++;
     let material1 = new THREE.MeshBasicMaterial({map:goalNet,transparent: true, side: THREE.DoubleSide});
     let material2 = new THREE.MeshBasicMaterial({map:goalNet,transparent: true, side: THREE.DoubleSide});
     let material3 = new THREE.MeshBasicMaterial({map:grassTexture,transparent: false, side: THREE.DoubleSide});
@@ -1485,7 +1474,6 @@ function comIndexNext() { // rolls commercial signs
 
 async function JUSTloadMyShitUp() {
     startGame();
-    instructions++;
     try{
 
 
