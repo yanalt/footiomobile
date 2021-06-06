@@ -986,7 +986,7 @@ async function setupSocket(socket) {
             player.screenHeight = global.screenHeight;
             player.target = target;
             player.conf = conf;
-            player.name = 'lol';
+            player.name = '';
 
             global.player = player;
             socket.emit('gotit', player);
